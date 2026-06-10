@@ -1414,10 +1414,26 @@ async function loadDB(){
       console.log('Loaded from Supabase');
       toast('☁ Loaded from Supabase');
     } else {
-      // Nothing in Supabase yet — write defaults
+      // Row missing or empty — insert it now
       db = JSON.parse(JSON.stringify(DB_DEFAULTS));
-      console.log('No Supabase data found — writing defaults');
-      await saveDB();
+      console.log('No Supabase row found — inserting defaults');
+      // Force INSERT (not upsert) since row definitely doesn't exist
+      const body = JSON.stringify({ id:'main', data: db, updated_at: new Date().toISOString() });
+      const headers = {
+        'Content-Type':'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      };
+      const ins = await fetch(SUPABASE_URL + '/rest/v1/app_data', { method:'POST', headers, body });
+      if(ins.ok){
+        console.log('Inserted default row into Supabase');
+        toast('☁ Supabase initialised');
+      } else {
+        const t = await ins.text();
+        console.warn('Supabase initial insert failed:', t);
+        toast('⚠ Supabase init failed: ' + t, 5000);
+      }
     }
   } catch(e){
     console.error('Supabase load failed:', e);
@@ -1433,23 +1449,38 @@ async function loadDB(){
 async function saveDB(){
   try{
     const body = JSON.stringify({ id:'main', data: db, updated_at: new Date().toISOString() });
-    const res = await fetch(
-      SUPABASE_URL + '/rest/v1/app_data',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-          'Prefer': 'resolution=merge-duplicates,return=minimal'
-        },
-        body
-      }
+    const headers = {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+    };
+
+    // Try PATCH (update) first
+    const patch = await fetch(
+      SUPABASE_URL + '/rest/v1/app_data?id=eq.main',
+      { method:'PATCH', headers:{...headers,'Prefer':'return=representation'}, body }
     );
-    if(!res.ok){
-      const errText = await res.text();
-      throw new Error('HTTP ' + res.status + ' — ' + errText);
+
+    if(patch.ok){
+      const patched = await patch.json();
+      if(patched && patched.length > 0){
+        // Row existed and was updated
+        try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
+        console.log('Saved to Supabase');
+        return true;
+      }
     }
+
+    // PATCH matched 0 rows — row doesn't exist yet, INSERT it
+    const post = await fetch(
+      SUPABASE_URL + '/rest/v1/app_data',
+      { method:'POST', headers:{...headers,'Prefer':'return=minimal'}, body }
+    );
+    if(!post.ok){
+      const errText = await post.text();
+      throw new Error('HTTP ' + post.status + ' — ' + errText);
+    }
+
     try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
     console.log('Saved to Supabase');
     return true;
