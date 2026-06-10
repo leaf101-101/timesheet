@@ -1285,7 +1285,7 @@ tr:hover td{background:var(--s2)}
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-title">Data Overview</div>
-      <div class="flex"><button class="btn btn-g btn-sm" onclick="exportAll()">⬇ Export All CSV</button><button class="btn btn-d btn-sm" onclick="if(confirm(&#39;Clear ALL timesheet data?&#39;)){db.timesheets={};db.approvals={};saveDB();toast(&#39;Cleared&#39;);renderManage();}">⚠ Clear Data</button></div>
+      <div class="flex"><button class="btn btn-g btn-sm" onclick="exportAll()">⬇ Export All CSV</button><button class="btn btn-d btn-sm" onclick="if(confirm('Clear ALL timesheet data?')){db.timesheets={};db.approvals={};saveDB().then(()=>{toast('Cleared');renderManage();});}">⚠ Clear Data</button></div>
     </div>
     <div class="card-body"><div class="g4" id="data-overview">
     <div class="sc"><div class="sl">Employees</div><div class="sv">10</div></div>
@@ -1360,8 +1360,17 @@ tr:hover td{background:var(--s2)}
 // ================================================================
 // DB
 // ================================================================
-const DB_KEY='fineart_ts_v6';
-let db={
+// ================================================================
+// SUPABASE CONFIG — paste your values below
+// ================================================================
+const SUPABASE_URL = "PASTE_MY_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_MY_PUBLISHABLE_API_KEY_HERE";
+
+// ================================================================
+// DEFAULT DB STRUCTURE
+// ================================================================
+const DB_KEY = 'fineart_ts_v6'; // used only for localStorage cache & manager PIN
+const DB_DEFAULTS = {
   employees:['Cobus','Clivia','Deborah','Heinrich','Leigh','Linda','Mdi','Michelle','Obey','Sam','Sharon','Susan'],
   outlets:['Dockside','Eikestad Gallery','Harbourside Gallery','Vineyard Gallery'],
   timesheets:{}, approvals:{}, customPH:{}, empPins:{}, phOverrides:{},
@@ -1374,9 +1383,81 @@ let db={
     'Vineyard Gallery':{Mon:{o:'09:00',c:'17:00'},Tue:{o:'09:00',c:'17:00'},Wed:{o:'09:00',c:'17:00'},Thu:{o:'09:00',c:'17:00'},Fri:{o:'09:00',c:'17:00'},Sat:{o:'09:00',c:'17:00'},Sun:{o:'09:00',c:'17:00'}}
   }
 };
-function loadDB(){try{const r=localStorage.getItem(DB_KEY);if(r){const p=JSON.parse(r);const defDef=db.empDefaults;db={...db,...p};db.empDefaults={...defDef,...(p.empDefaults||{})};}}catch(e){}}
-function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db));}
-loadDB();
+let db = JSON.parse(JSON.stringify(DB_DEFAULTS));
+
+// ================================================================
+// SUPABASE REST HELPERS (no library — plain fetch, works from file://)
+// ================================================================
+function sbHeaders(){
+  return{
+    'Content-Type':'application/json',
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+    'Prefer': 'return=minimal'
+  };
+}
+
+async function loadDB(){
+  try{
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/app_data?id=eq.main&select=data',
+      { method:'GET', headers: sbHeaders() }
+    );
+    if(!res.ok) throw new Error('HTTP ' + res.status + ' ' + res.statusText);
+    const rows = await res.json();
+    if(rows && rows.length > 0 && rows[0].data && Object.keys(rows[0].data).length > 0){
+      const p = rows[0].data;
+      db = { ...DB_DEFAULTS, ...p };
+      db.empDefaults = { ...DB_DEFAULTS.empDefaults, ...(p.empDefaults||{}) };
+      // Also cache locally
+      try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
+      console.log('Loaded from Supabase');
+      toast('☁ Loaded from Supabase');
+    } else {
+      // Nothing in Supabase yet — write defaults
+      db = JSON.parse(JSON.stringify(DB_DEFAULTS));
+      console.log('No Supabase data found — writing defaults');
+      await saveDB();
+    }
+  } catch(e){
+    console.error('Supabase load failed:', e);
+    toast('⚠ Supabase unavailable — using local cache: ' + e.message, 5000);
+    // Fall back to localStorage cache
+    try{
+      const r = localStorage.getItem(DB_KEY);
+      if(r){ const p=JSON.parse(r); db={...DB_DEFAULTS,...p}; db.empDefaults={...DB_DEFAULTS.empDefaults,...(p.empDefaults||{})}; }
+    }catch(e2){}
+  }
+}
+
+async function saveDB(){
+  try{
+    // Upsert via PATCH first (row exists), fall back to POST if not
+    const body = JSON.stringify({ id:'main', data: db, updated_at: new Date().toISOString() });
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/app_data?id=eq.main',
+      { method:'PATCH', headers: { ...sbHeaders(), 'Prefer':'return=minimal' }, body }
+    );
+    if(res.status === 404 || res.status === 0){
+      // Row doesn't exist — insert it
+      const res2 = await fetch(
+        SUPABASE_URL + '/rest/v1/app_data',
+        { method:'POST', headers: { ...sbHeaders(), 'Prefer':'return=minimal' }, body }
+      );
+      if(!res2.ok) throw new Error('HTTP ' + res2.status + ' ' + res2.statusText);
+    } else if(!res.ok){
+      throw new Error('HTTP ' + res.status + ' ' + res.statusText);
+    }
+    // Update local cache too
+    try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
+    console.log('Saved to Supabase');
+    return true;
+  } catch(e){
+    console.error('Supabase save failed:', e);
+    toast('⚠ Supabase save failed: ' + e.message, 5000);
+    return false;
+  }
+}
 
 // ================================================================
 // UTILS
@@ -1629,7 +1710,7 @@ function checkEmpPIN(){
   }
 }
 
-function saveEmpPIN(){
+async function saveEmpPIN(){
   const emp=document.getElementById('gate-emp-select').value;
   const p1=document.getElementById('emp-setup-pin1').value;
   const p2=document.getElementById('emp-setup-pin2').value;
@@ -1637,7 +1718,7 @@ function saveEmpPIN(){
   if(!/^\d{4,8}$/.test(p1)){err.textContent='PIN must be 4-8 digits (numbers only)';return;}
   if(p1!==p2){err.textContent='PINs do not match';return;}
   if(!db.empPins)db.empPins={};
-  db.empPins[emp]=p1;saveDB();
+  db.empPins[emp]=p1;await saveDB();
   _empUnlocked=emp;
   document.getElementById('emp-pin-gate').style.display='none';
   document.getElementById('entry-emp').value=emp;
@@ -1765,15 +1846,15 @@ function updateTotals(){
   document.getElementById('tot-comp').textContent=comp.toFixed(1);
   // Auto-save after 800ms of inactivity
   clearTimeout(_autoSaveTimer);
-  _autoSaveTimer=setTimeout(()=>{
+  _autoSaveTimer=setTimeout(async()=>{
     const emp=document.getElementById('entry-emp').value;
     const pk=document.getElementById('entry-period').value;
     if(!emp||!pk||isPeriodLocked(emp,pk))return;
-    saveTimesheet(true);
+    await saveTimesheet(true);
   },800);
 }
 
-function saveTimesheet(silent){
+async function saveTimesheet(silent){
   const emp=document.getElementById('entry-emp').value;
   const pk=document.getElementById('entry-period').value;
   if(isPeriodLocked(emp,pk)){if(!silent)toast('⛔ Period is approved & locked');return;}
@@ -1795,7 +1876,7 @@ function saveTimesheet(silent){
       daysData[dk]={fo,bo,sunday,ph,sick,annual,comp,notes,outlet:dayOutlet};
   });
   db.timesheets[`${emp}|${pk}`]={outlet,days:daysData};
-  saveDB();
+  await saveDB();
   if(silent){
     // Show subtle auto-saved indicator
     const ind=document.getElementById('autosave-ind');
@@ -1840,14 +1921,14 @@ function getSummaryData(pk){
   return{data,outlets:db.outlets.filter(o=>outletSet.has(o))};
 }
 
-function approvePeriod(){
+async function approvePeriod(){
   if(!_isMgr){toast('Manager access required');return;}
   const pk=document.getElementById('sum-period').value;
   const period=allPeriods.find(p=>p.key===pk);
   if(!confirm(`Approve and lock period:\n${period?.label}?\n\nEmployees will no longer be able to edit their hours.`))return;
   if(!db.approvals)db.approvals={};
   db.employees.forEach(emp=>{if(db.timesheets[`${emp}|${pk}`])db.approvals[`${emp}|${pk}`]=true;});
-  saveDB();renderSummary();toast('✓ Period approved and locked');
+  await saveDB();renderSummary();toast('✓ Period approved and locked');
 }
 
 function calcExpectedFO(outlet,days){
@@ -2353,19 +2434,19 @@ function renderPHPage(){
   }).join('');
 }
 function showAddPH(){document.getElementById('add-ph-form').style.display='block';document.getElementById('new-ph-date').focus();}
-function addCustomPH(){
+async function addCustomPH(){
   const dt=document.getElementById('new-ph-date').value,name=document.getElementById('new-ph-name').value.trim();
   if(!dt||!name){toast('Date and name required');return;}
   if(!db.customPH)db.customPH={};
   const dp=document.getElementById('new-ph-dp')?.checked||false;
-  db.customPH[dt]={name,doublePay:dp};saveDB();renderPHPage();
+  db.customPH[dt]={name,doublePay:dp};await saveDB();renderPHPage();
   document.getElementById('add-ph-form').style.display='none';
   document.getElementById('new-ph-date').value='';document.getElementById('new-ph-name').value='';
   if(document.getElementById('new-ph-dp'))document.getElementById('new-ph-dp').checked=false;
   toast('✓ Holiday added');
 }
-function removeCustomPH(dk){delete db.customPH[dk];saveDB();renderPHPage();toast('Removed');}
-function togglePHDoublePay(dk){
+async function removeCustomPH(dk){delete db.customPH[dk];await saveDB();renderPHPage();toast('Removed');}
+async function togglePHDoublePay(dk){
   // For custom PH: update the doublePay flag in db.customPH
   if(db.customPH&&dk in db.customPH){
     const val=db.customPH[dk];
@@ -2378,7 +2459,7 @@ function togglePHDoublePay(dk){
     const current=dk in db.phOverrides?db.phOverrides[dk]:true;
     db.phOverrides[dk]=!current;
   }
-  saveDB();renderPHPage();
+  await saveDB();renderPHPage();
 }
 
 // ================================================================
@@ -2414,21 +2495,21 @@ function renderPeriodsPage(){
     tbody.appendChild(tr);
   });
 }
-function savePeriodsConfig(){
+async function savePeriodsConfig(){
   const startMonth=parseInt(document.getElementById('pc-start-month').value);
   const startYear=parseInt(document.getElementById('pc-start-year').value);
   const numMonths=Math.max(1,Math.min(120,parseInt(document.getElementById('pc-num-months').value)||55));
-  db.periodConfig={startYear,startMonth,numMonths};saveDB();allPeriods=makePeriods();populateSelects();renderPeriodsPage();
+  db.periodConfig={startYear,startMonth,numMonths};await saveDB();allPeriods=makePeriods();populateSelects();renderPeriodsPage();
   toast(`✓ ${numMonths} periods from ${MABBR[startMonth]} ${startYear}`);
 }
-function hidePeriod(pk){
+async function hidePeriod(pk){
   if(!db.hiddenPeriods)db.hiddenPeriods=[];
   if(!db.hiddenPeriods.includes(pk))db.hiddenPeriods.push(pk);
-  saveDB();allPeriods=makePeriods();populateSelects();renderPeriodsPage();toast('Period hidden — data kept safely');
+  await saveDB();allPeriods=makePeriods();populateSelects();renderPeriodsPage();toast('Period hidden — data kept safely');
 }
-function showPeriod(pk){
+async function showPeriod(pk){
   db.hiddenPeriods=(db.hiddenPeriods||[]).filter(k=>k!==pk);
-  saveDB();allPeriods=makePeriods();populateSelects();renderPeriodsPage();toast('Period restored');
+  await saveDB();allPeriods=makePeriods();populateSelects();renderPeriodsPage();toast('Period restored');
 }
 
 // ================================================================
@@ -2453,7 +2534,7 @@ function renderTradingHoursGrid(){
   html+=`</tbody></table></div>`;
   document.getElementById('trading-hours-grid').innerHTML=html;
 }
-function saveTradingHours(){
+async function saveTradingHours(){
   if(!db.tradingHours)db.tradingHours={};
   document.querySelectorAll('#trading-hours-grid input[type=time]').forEach(inp=>{
     const{outlet,day,field}=inp.dataset;
@@ -2461,7 +2542,7 @@ function saveTradingHours(){
     if(!db.tradingHours[outlet][day])db.tradingHours[outlet][day]={o:'',c:''};
     db.tradingHours[outlet][day][field]=inp.value;
   });
-  saveDB();toast('✓ Trading hours saved');
+  await saveDB();toast('✓ Trading hours saved');
 }
 
 // ================================================================
@@ -2551,54 +2632,54 @@ function cancelEmpAction(idx){
   document.getElementById(`emp-pin-reset-${idx}`).style.display='none';
   document.getElementById(`emp-defgal-${idx}`).style.display='none';
 }
-function doSetEmpDefGallery(idx){
+async function doSetEmpDefGallery(idx){
   const emp=sortArr(db.employees)[idx];if(!emp)return;
   const sel=document.getElementById(`emp-defgal-sel-${idx}`);
   if(!sel)return;
   if(!db.empDefaults)db.empDefaults={};
   db.empDefaults[emp]=sel.value;
-  saveDB();renderManage();toast(`✓ Default gallery set: ${emp} → ${sel.value}`);
+  await saveDB();renderManage();toast(`✓ Default gallery set: ${emp} → ${sel.value}`);
 }
-function doRemoveEmp(idx){
+async function doRemoveEmp(idx){
   const emp=sortArr(db.employees)[idx];if(!emp)return;
   db.employees=db.employees.filter(x=>x!==emp);
   if(db.empPins)delete db.empPins[emp];
   if(db.empDefaults)delete db.empDefaults[emp];
-  saveDB();populateSelects();renderManage();toast('Removed: '+emp);
+  await saveDB();populateSelects();renderManage();toast('Removed: '+emp);
 }
 function showRemoveOutlet(idx){
   document.getElementById(`outlet-confirm-${idx}`).style.display='block';
 }
-function doRemoveOutlet(idx){
+async function doRemoveOutlet(idx){
   const o=sortArr(db.outlets)[idx];if(!o)return;
   db.outlets=db.outlets.filter(x=>x!==o);
-  saveDB();populateSelects();renderManage();toast('Removed: '+o);
+  await saveDB();populateSelects();renderManage();toast('Removed: '+o);
 }
-function doResetPIN(idx){
+async function doResetPIN(idx){
   const emp=sortArr(db.employees)[idx];if(!emp)return;
   const np=document.getElementById(`emp-new-pin-${idx}`).value;
   const errEl=document.getElementById(`emp-pin-reset-err-${idx}`);
   if(!/^\d{4,8}$/.test(np)){errEl.textContent='Must be 4-8 digits';return;}
   if(!db.empPins)db.empPins={};
-  db.empPins[emp]=np;saveDB();renderManage();
+  db.empPins[emp]=np;await saveDB();renderManage();
   toast(`✓ PIN reset for ${emp}`);
 }
 
 function showAddEmp(){document.getElementById('add-emp-form').style.display='block';document.getElementById('new-emp-name').focus();}
-function addEmployee(){
+async function addEmployee(){
   const n=document.getElementById('new-emp-name').value.trim();if(!n)return;
   if(db.employees.map(e=>e.toLowerCase()).includes(n.toLowerCase())){toast('Already exists');return;}
-  db.employees.push(n);db.employees=sortArr(db.employees);saveDB();populateSelects();renderManage();
+  db.employees.push(n);db.employees=sortArr(db.employees);await saveDB();populateSelects();renderManage();
   document.getElementById('add-emp-form').style.display='none';document.getElementById('new-emp-name').value='';toast('✓ Added: '+n);
 }
 function showAddOutlet(){document.getElementById('add-outlet-form').style.display='block';document.getElementById('new-outlet-name').focus();}
-function addOutlet(){
+async function addOutlet(){
   const n=document.getElementById('new-outlet-name').value.trim();if(!n)return;
   if(db.outlets.map(o=>o.toLowerCase()).includes(n.toLowerCase())){toast('Already exists');return;}
   db.outlets.push(n);db.outlets=sortArr(db.outlets);
   if(!db.tradingHours)db.tradingHours={};
   db.tradingHours[n]={};DAYLIST.forEach(d=>{db.tradingHours[n][d]={o:'',c:''};});
-  saveDB();populateSelects();renderManage();
+  await saveDB();populateSelects();renderManage();
   document.getElementById('add-outlet-form').style.display='none';document.getElementById('new-outlet-name').value='';toast('✓ Added: '+n);
 }
 function openChangePIN(){document.getElementById('change-pin-form').style.display='block';document.getElementById('cp-cur').focus();}
@@ -2614,13 +2695,13 @@ function changePIN(){
   err.textContent='';toast('✓ Manager PIN changed');
 }
 
-function saveMgrEmail(){
+async function saveMgrEmail(){
   const email=document.getElementById('mgr-email').value.trim();
   if(!email){toast('Please enter an email address');return;}
-  db.mgrEmail=email;saveDB();toast('✓ Recovery email saved: '+email);
+  db.mgrEmail=email;await saveDB();toast('✓ Recovery email saved: '+email);
 }
 
-function sendPINReset(){
+async function sendPINReset(){
   const email=db.mgrEmail;
   if(!email){
     // Show message in the gate
@@ -2630,7 +2711,7 @@ function sendPINReset(){
   // Generate a 6-digit reset code and store it temporarily
   const code=Math.floor(100000+Math.random()*900000).toString();
   db._resetCode=code;db._resetExpiry=Date.now()+15*60*1000; // 15 min
-  saveDB();
+  await saveDB();
   // Open mailto
   const subject=encodeURIComponent('Fine Art Gallery — Manager PIN Reset');
   const body=encodeURIComponent(
@@ -2657,7 +2738,7 @@ function sendPINReset(){
   },500);
 }
 
-function applyPINReset(){
+async function applyPINReset(){
   const code=document.getElementById('reset-code-inp').value.trim();
   const newPin=document.getElementById('reset-new-pin').value.trim();
   const err=document.getElementById('reset-err');
@@ -2665,7 +2746,7 @@ function applyPINReset(){
   if(code!==db._resetCode){err.textContent='Incorrect code.';return;}
   if(!/^\d{4,8}$/.test(newPin)){err.textContent='PIN must be 4-8 digits.';return;}
   localStorage.setItem('fa_pin',newPin);
-  delete db._resetCode;delete db._resetExpiry;saveDB();
+  delete db._resetCode;delete db._resetExpiry;await saveDB();
   document.getElementById('emp-pin-gate').style.display='none';
   _isMgr=true;applyAccess();
   toast('✓ PIN reset successfully. You are now logged in.');
@@ -2689,11 +2770,17 @@ function exportAll(){
 // ================================================================
 // INIT
 // ================================================================
-db.employees=sortArr(db.employees);
-db.outlets=sortArr(db.outlets);
-populateSelects();
-populateCalSelects();
-applyAccess(); // shows gate on load
+(async function init(){
+  document.body.style.opacity='0.5';
+  await loadDB();
+  document.body.style.opacity='1';
+  db.employees=sortArr(db.employees);
+  db.outlets=sortArr(db.outlets);
+  allPeriods=makePeriods();
+  populateSelects();
+  populateCalSelects();
+  applyAccess(); // shows gate on load
+})();
 
 </script>
 
