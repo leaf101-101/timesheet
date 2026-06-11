@@ -160,7 +160,7 @@ tr:hover td{background:var(--s2)}
     <button class="nb mgr-only" onclick="showPage(&#39;slicedice&#39;)" style="display: inline-flex !important;">Slice &amp; Dice</button>
     <button class="nb mgr-only" onclick="showPage(&#39;publicholidays&#39;)" style="display: inline-flex !important;">Public Holidays</button>
     <button class="nb mgr-only" onclick="showPage(&#39;periods&#39;)" style="display: inline-flex !important;">Payroll Periods</button>
-    <button class="nb mgr-only" onclick="showPage(&#39;manage&#39;)" style="display: inline-flex !important;">Manage</button>
+    <button class="nb mgr-only supermgr-only" onclick="showPage(&#39;manage&#39;)" style="display: inline-flex !important;">Manage</button>
     <div style="width:1px;background:rgba(255,255,255,.2);margin:4px 4px;align-self:stretch"></div>
     <button id="lock-btn" onclick="toggleAccess()" style="padding: 7px 14px; border-radius: var(--r); border-color: rgba(255, 255, 255, 0.2); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; background: transparent; color: rgba(255, 255, 255, 0.45); cursor: pointer; font-size: 13px; font-family: Georgia, serif; display: flex; align-items: center; gap: 6px; white-space: nowrap;" onmouseover="this.style.background=&#39;rgba(201,169,110,.15)&#39;" onmouseout="this.style.background=&#39;transparent&#39;">
       <span id="lock-icon">🔓</span><span id="lock-label">Lock</span>
@@ -181,7 +181,7 @@ tr:hover td{background:var(--s2)}
       <div style="font-size:12px;color:var(--tm);margin-bottom:.75rem">Select your name, then enter your PIN</div>
       <div style="margin-bottom:.75rem">
         <label>I am</label>
-        <select id="gate-emp-select" style="font-size:15px;padding:9px;text-align:center" onchange="onGateEmpChange()"><option value="__MANAGER__">🔐 Manager</option><option value="Clivia">Clivia</option><option value="Cobus">Cobus</option><option value="Deborah">Deborah</option><option value="Heinrich">Heinrich</option><option value="Leigh">Leigh</option><option value="Linda">Linda</option><option value="Mdi">Mdi</option><option value="Michelle">Michelle</option><option value="Obey">Obey</option><option value="Sam">Sam</option><option value="Sharon">Sharon</option><option value="Susan">Susan</option></select>
+        <select id="gate-emp-select" style="font-size:15px;padding:9px;text-align:center" onchange="onGateEmpChange()"></select>
       </div>
       <div id="gate-pin-section" style="display: block;">
         <input type="password" id="emp-pin-input" maxlength="8" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:8px;margin-bottom:.5rem" onkeydown="if(event.key===&#39;Enter&#39;)checkEmpPIN()">
@@ -205,9 +205,9 @@ tr:hover td{background:var(--s2)}
   </div>
   <div class="card">
     <div class="filter-bar">
-      <div><label>Employee</label><select id="entry-emp" onchange="onEmpChange()"><option>Clivia Saais</option><option>Deborah Barnard</option><option>Heinrich</option><option>Leigh Horne</option><option>Mdi</option><option>Obey Saruwaka</option><option>Sharon Nell</option><option>Simba Kasuso</option><option>Susan</option><option>Suzan van Rensburg</option></select></div>
+      <div><label>Employee</label><select id="entry-emp" onchange="onEmpChange()"></select></div>
       <div><label>Period</label><select id="entry-period" onchange="loadEntryForm()"><option value="2026-05-19">19 May 2026 — 18 Jun 2026</option><option value="2026-06-19">19 Jun 2026 — 18 Jul 2026</option><option value="2026-07-19">19 Jul 2026 — 18 Aug 2026</option><option value="2026-08-19">19 Aug 2026 — 18 Sept 2026</option><option value="2026-09-19">19 Sept 2026 — 18 Oct 2026</option><option value="2026-10-19">19 Oct 2026 — 18 Nov 2026</option><option value="2026-11-19">19 Nov 2026 — 18 Dec 2026</option><option value="2026-12-19">19 Dec 2026 — 18 Jan 2027</option><option value="2027-01-19">19 Jan 2027 — 18 Feb 2027</option><option value="2027-02-19">19 Feb 2027 — 18 Mar 2027</option><option value="2027-03-19">19 Mar 2027 — 18 Apr 2027</option><option value="2027-04-19">19 Apr 2027 — 18 May 2027</option><option value="2027-05-19">19 May 2027 — 18 Jun 2027</option><option value="2027-06-19">19 Jun 2027 — 18 Jul 2027</option><option value="2027-07-19">19 Jul 2027 — 18 Aug 2027</option><option value="2027-08-19">19 Aug 2027 — 18 Sept 2027</option><option value="2027-09-19">19 Sept 2027 — 18 Oct 2027</option><option value="2027-10-19">19 Oct 2027 — 18 Nov 2027</option><option value="2027-11-19">19 Nov 2027 — 18 Dec 2027</option><option value="2027-12-19">19 Dec 2027 — 18 Jan 2028</option><option value="2028-01-19">19 Jan 2028 — 18 Feb 2028</option><option value="2028-02-19">19 Feb 2028 — 18 Mar 2028</option><option value="2028-03-19">19 Mar 2028 — 18 Apr 2028</option><option value="2028-04-19">19 Apr 2028 — 18 May 2028</option><option value="2028-05-19">19 May 2028 — 18 Jun 2028</option><option value="2028-06-19">19 Jun 2028 — 18 Jul 2028</option><option value="2028-07-19">19 Jul 2028 — 18 Aug 2028</option><option value="2028-08-19">19 Aug 2028 — 18 Sept 2028</option><option value="2028-09-19">19 Sept 2028 — 18 Oct 2028</option><option value="2028-10-19">19 Oct 2028 — 18 Nov 2028</option><option value="2028-11-19">19 Nov 2028 — 18 Dec 2028</option><option value="2028-12-19">19 Dec 2028 — 18 Jan 2029</option><option value="2029-01-19">19 Jan 2029 — 18 Feb 2029</option><option value="2029-02-19">19 Feb 2029 — 18 Mar 2029</option><option value="2029-03-19">19 Mar 2029 — 18 Apr 2029</option><option value="2029-04-19">19 Apr 2029 — 18 May 2029</option><option value="2029-05-19">19 May 2029 — 18 Jun 2029</option><option value="2029-06-19">19 Jun 2029 — 18 Jul 2029</option><option value="2029-07-19">19 Jul 2029 — 18 Aug 2029</option><option value="2029-08-19">19 Aug 2029 — 18 Sept 2029</option><option value="2029-09-19">19 Sept 2029 — 18 Oct 2029</option><option value="2029-10-19">19 Oct 2029 — 18 Nov 2029</option><option value="2029-11-19">19 Nov 2029 — 18 Dec 2029</option><option value="2029-12-19">19 Dec 2029 — 18 Jan 2030</option><option value="2030-01-19">19 Jan 2030 — 18 Feb 2030</option><option value="2030-02-19">19 Feb 2030 — 18 Mar 2030</option><option value="2030-03-19">19 Mar 2030 — 18 Apr 2030</option><option value="2030-04-19">19 Apr 2030 — 18 May 2030</option><option value="2030-05-19">19 May 2030 — 18 Jun 2030</option><option value="2030-06-19">19 Jun 2030 — 18 Jul 2030</option><option value="2030-07-19">19 Jul 2030 — 18 Aug 2030</option><option value="2030-08-19">19 Aug 2030 — 18 Sept 2030</option><option value="2030-09-19">19 Sept 2030 — 18 Oct 2030</option><option value="2030-10-19">19 Oct 2030 — 18 Nov 2030</option><option value="2030-11-19">19 Nov 2030 — 18 Dec 2030</option></select></div>
-      <div><label>Gallery / Outlet</label><select id="entry-outlet"><option>Dockside</option><option>Eikestad Gallery</option><option>Harbourside Gallery</option><option>Vineyard Gallery</option></select></div>
+      <div><label>Gallery / Outlet</label><select id="entry-outlet"></select></div>
       <div style="margin-left:auto;display:flex;gap:6px;align-items:flex-end">
         <span id="autosave-ind" style="font-size: 11px; color: var(--ok); opacity: 0; transition: opacity 0.4s; align-self: center;">✓ Auto-saved</span>
         <button class="btn btn-a" onclick="saveTimesheet()">💾 Save</button>
@@ -849,8 +849,8 @@ tr:hover td{background:var(--s2)}
       <div><label>From Year</label><select id="cal-fy"><option>2026</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option></select></div>
       <div><label>To Month</label><select id="cal-tm"><option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option><option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option></select></div>
       <div><label>To Year</label><select id="cal-ty"><option>2026</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option></select></div>
-      <div><label>Gallery</label><select id="cal-outlet"><option value="ALL">All Galleries</option><option>Dockside</option><option>Eikestad Gallery</option><option>Harbourside Gallery</option><option>Vineyard Gallery</option></select></div>
-      <div><label>Employee</label><select id="cal-emp"><option value="ALL">All Employees</option><option>Clivia Saais</option><option>Deborah Barnard</option><option>Heinrich</option><option>Leigh Horne</option><option>Mdi</option><option>Obey Saruwaka</option><option>Sharon Nell</option><option>Simba Kasuso</option><option>Susan</option><option>Suzan van Rensburg</option></select></div>
+      <div><label>Gallery</label><select id="cal-outlet"></select></div>
+      <div><label>Employee</label><select id="cal-emp"></select></div>
       <div style="margin-left:auto;display:flex;gap:6px;align-items:flex-end">
         <button class="btn btn-p" onclick="renderCalReport()">Generate →</button>
         <button class="btn btn-g btn-sm" onclick="exportCalCSV()">⬇ CSV</button>
@@ -867,7 +867,7 @@ tr:hover td{background:var(--s2)}
     <div class="card-hd"><div class="card-title">Period Range Analysis</div></div>
     <div class="card-body">
       <div class="g2 mb1"><div><label>From Period</label><select id="slice-from"><option value="2026-05-19">19 May 2026 — 18 Jun 2026</option><option value="2026-06-19">19 Jun 2026 — 18 Jul 2026</option><option value="2026-07-19">19 Jul 2026 — 18 Aug 2026</option><option value="2026-08-19">19 Aug 2026 — 18 Sept 2026</option><option value="2026-09-19">19 Sept 2026 — 18 Oct 2026</option><option value="2026-10-19">19 Oct 2026 — 18 Nov 2026</option><option value="2026-11-19">19 Nov 2026 — 18 Dec 2026</option><option value="2026-12-19">19 Dec 2026 — 18 Jan 2027</option><option value="2027-01-19">19 Jan 2027 — 18 Feb 2027</option><option value="2027-02-19">19 Feb 2027 — 18 Mar 2027</option><option value="2027-03-19">19 Mar 2027 — 18 Apr 2027</option><option value="2027-04-19">19 Apr 2027 — 18 May 2027</option><option value="2027-05-19">19 May 2027 — 18 Jun 2027</option><option value="2027-06-19">19 Jun 2027 — 18 Jul 2027</option><option value="2027-07-19">19 Jul 2027 — 18 Aug 2027</option><option value="2027-08-19">19 Aug 2027 — 18 Sept 2027</option><option value="2027-09-19">19 Sept 2027 — 18 Oct 2027</option><option value="2027-10-19">19 Oct 2027 — 18 Nov 2027</option><option value="2027-11-19">19 Nov 2027 — 18 Dec 2027</option><option value="2027-12-19">19 Dec 2027 — 18 Jan 2028</option><option value="2028-01-19">19 Jan 2028 — 18 Feb 2028</option><option value="2028-02-19">19 Feb 2028 — 18 Mar 2028</option><option value="2028-03-19">19 Mar 2028 — 18 Apr 2028</option><option value="2028-04-19">19 Apr 2028 — 18 May 2028</option><option value="2028-05-19">19 May 2028 — 18 Jun 2028</option><option value="2028-06-19">19 Jun 2028 — 18 Jul 2028</option><option value="2028-07-19">19 Jul 2028 — 18 Aug 2028</option><option value="2028-08-19">19 Aug 2028 — 18 Sept 2028</option><option value="2028-09-19">19 Sept 2028 — 18 Oct 2028</option><option value="2028-10-19">19 Oct 2028 — 18 Nov 2028</option><option value="2028-11-19">19 Nov 2028 — 18 Dec 2028</option><option value="2028-12-19">19 Dec 2028 — 18 Jan 2029</option><option value="2029-01-19">19 Jan 2029 — 18 Feb 2029</option><option value="2029-02-19">19 Feb 2029 — 18 Mar 2029</option><option value="2029-03-19">19 Mar 2029 — 18 Apr 2029</option><option value="2029-04-19">19 Apr 2029 — 18 May 2029</option><option value="2029-05-19">19 May 2029 — 18 Jun 2029</option><option value="2029-06-19">19 Jun 2029 — 18 Jul 2029</option><option value="2029-07-19">19 Jul 2029 — 18 Aug 2029</option><option value="2029-08-19">19 Aug 2029 — 18 Sept 2029</option><option value="2029-09-19">19 Sept 2029 — 18 Oct 2029</option><option value="2029-10-19">19 Oct 2029 — 18 Nov 2029</option><option value="2029-11-19">19 Nov 2029 — 18 Dec 2029</option><option value="2029-12-19">19 Dec 2029 — 18 Jan 2030</option><option value="2030-01-19">19 Jan 2030 — 18 Feb 2030</option><option value="2030-02-19">19 Feb 2030 — 18 Mar 2030</option><option value="2030-03-19">19 Mar 2030 — 18 Apr 2030</option><option value="2030-04-19">19 Apr 2030 — 18 May 2030</option><option value="2030-05-19">19 May 2030 — 18 Jun 2030</option><option value="2030-06-19">19 Jun 2030 — 18 Jul 2030</option><option value="2030-07-19">19 Jul 2030 — 18 Aug 2030</option><option value="2030-08-19">19 Aug 2030 — 18 Sept 2030</option><option value="2030-09-19">19 Sept 2030 — 18 Oct 2030</option><option value="2030-10-19">19 Oct 2030 — 18 Nov 2030</option><option value="2030-11-19">19 Nov 2030 — 18 Dec 2030</option></select></div><div><label>To Period</label><select id="slice-to"><option value="2026-05-19">19 May 2026 — 18 Jun 2026</option><option value="2026-06-19">19 Jun 2026 — 18 Jul 2026</option><option value="2026-07-19">19 Jul 2026 — 18 Aug 2026</option><option value="2026-08-19">19 Aug 2026 — 18 Sept 2026</option><option value="2026-09-19">19 Sept 2026 — 18 Oct 2026</option><option value="2026-10-19">19 Oct 2026 — 18 Nov 2026</option><option value="2026-11-19">19 Nov 2026 — 18 Dec 2026</option><option value="2026-12-19">19 Dec 2026 — 18 Jan 2027</option><option value="2027-01-19">19 Jan 2027 — 18 Feb 2027</option><option value="2027-02-19">19 Feb 2027 — 18 Mar 2027</option><option value="2027-03-19">19 Mar 2027 — 18 Apr 2027</option><option value="2027-04-19">19 Apr 2027 — 18 May 2027</option><option value="2027-05-19">19 May 2027 — 18 Jun 2027</option><option value="2027-06-19">19 Jun 2027 — 18 Jul 2027</option><option value="2027-07-19">19 Jul 2027 — 18 Aug 2027</option><option value="2027-08-19">19 Aug 2027 — 18 Sept 2027</option><option value="2027-09-19">19 Sept 2027 — 18 Oct 2027</option><option value="2027-10-19">19 Oct 2027 — 18 Nov 2027</option><option value="2027-11-19">19 Nov 2027 — 18 Dec 2027</option><option value="2027-12-19">19 Dec 2027 — 18 Jan 2028</option><option value="2028-01-19">19 Jan 2028 — 18 Feb 2028</option><option value="2028-02-19">19 Feb 2028 — 18 Mar 2028</option><option value="2028-03-19">19 Mar 2028 — 18 Apr 2028</option><option value="2028-04-19">19 Apr 2028 — 18 May 2028</option><option value="2028-05-19">19 May 2028 — 18 Jun 2028</option><option value="2028-06-19">19 Jun 2028 — 18 Jul 2028</option><option value="2028-07-19">19 Jul 2028 — 18 Aug 2028</option><option value="2028-08-19">19 Aug 2028 — 18 Sept 2028</option><option value="2028-09-19">19 Sept 2028 — 18 Oct 2028</option><option value="2028-10-19">19 Oct 2028 — 18 Nov 2028</option><option value="2028-11-19">19 Nov 2028 — 18 Dec 2028</option><option value="2028-12-19">19 Dec 2028 — 18 Jan 2029</option><option value="2029-01-19">19 Jan 2029 — 18 Feb 2029</option><option value="2029-02-19">19 Feb 2029 — 18 Mar 2029</option><option value="2029-03-19">19 Mar 2029 — 18 Apr 2029</option><option value="2029-04-19">19 Apr 2029 — 18 May 2029</option><option value="2029-05-19">19 May 2029 — 18 Jun 2029</option><option value="2029-06-19">19 Jun 2029 — 18 Jul 2029</option><option value="2029-07-19">19 Jul 2029 — 18 Aug 2029</option><option value="2029-08-19">19 Aug 2029 — 18 Sept 2029</option><option value="2029-09-19">19 Sept 2029 — 18 Oct 2029</option><option value="2029-10-19">19 Oct 2029 — 18 Nov 2029</option><option value="2029-11-19">19 Nov 2029 — 18 Dec 2029</option><option value="2029-12-19">19 Dec 2029 — 18 Jan 2030</option><option value="2030-01-19">19 Jan 2030 — 18 Feb 2030</option><option value="2030-02-19">19 Feb 2030 — 18 Mar 2030</option><option value="2030-03-19">19 Mar 2030 — 18 Apr 2030</option><option value="2030-04-19">19 Apr 2030 — 18 May 2030</option><option value="2030-05-19">19 May 2030 — 18 Jun 2030</option><option value="2030-06-19">19 Jun 2030 — 18 Jul 2030</option><option value="2030-07-19">19 Jul 2030 — 18 Aug 2030</option><option value="2030-08-19">19 Aug 2030 — 18 Sept 2030</option><option value="2030-09-19">19 Sept 2030 — 18 Oct 2030</option><option value="2030-10-19">19 Oct 2030 — 18 Nov 2030</option><option value="2030-11-19">19 Nov 2030 — 18 Dec 2030</option></select></div></div>
-      <div class="g2 mb1"><div><label>Employee</label><select id="slice-emp"><option value="ALL">All Employees</option><option>Clivia Saais</option><option>Deborah Barnard</option><option>Heinrich</option><option>Leigh Horne</option><option>Mdi</option><option>Obey Saruwaka</option><option>Sharon Nell</option><option>Simba Kasuso</option><option>Susan</option><option>Suzan van Rensburg</option></select></div><div><label>Gallery</label><select id="slice-outlet"><option value="ALL">All Galleries</option><option>Dockside</option><option>Eikestad Gallery</option><option>Harbourside Gallery</option><option>Vineyard Gallery</option></select></div></div>
+      <div class="g2 mb1"><div><label>Employee</label><select id="slice-emp"></select></div><div><label>Gallery</label><select id="slice-outlet"></select></div></div>
       <button class="btn btn-p" onclick="renderSlice()">Analyse →</button>
     </div>
   </div>
@@ -907,32 +907,22 @@ tr:hover td{background:var(--s2)}
 
 <!-- ===== MANAGE ===== -->
 <div class="page" id="page-manage">
+  <!-- ACCESS RIGHTS — Super Manager only -->
   <div class="card">
-    <div class="card-hd"><div class="card-title">🔐 Manager PIN &amp; Recovery</div></div>
+    <div class="card-hd"><div class="card-title">👑 Access Rights</div></div>
     <div class="card-body">
-      <div class="g2 mb1" style="max-width:600px">
-        <div>
-          <label>Manager Recovery Email</label>
-          <input type="email" id="mgr-email" placeholder="your@email.com" style="font-size:14px">
-          <div style="font-size:11px;color:var(--tm);margin-top:3px">Used to send a PIN reset code if you forget your PIN</div>
-        </div>
-        <div style="align-self:flex-end">
-          <button class="btn btn-p" onclick="saveMgrEmail()">💾 Save Email</button>
-        </div>
+      <div class="alert alert-info mb1" style="font-size:12px">
+        <strong>Super Managers</strong> have full access including this Manage tab and can grant or revoke roles.<br>
+        <strong>Managers</strong> can approve periods and view reports but cannot access the Manage tab.
       </div>
-      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
-        <div style="font-size:13px;color:var(--tm)">Change your manager PIN (requires current PIN).</div>
-        <button class="btn btn-a" onclick="openChangePIN()">🔑 Change PIN</button>
-      </div>
-      <div id="change-pin-form" style="display:none;border-top:1px solid var(--border);padding-top:1rem;margin-top:.75rem">
-        <div class="g3 mb1">
-          <div><label>Current PIN</label><input type="password" id="cp-cur" maxlength="8" placeholder="••••" style="text-align:center;letter-spacing:4px;font-size:18px"></div>
-          <div><label>New PIN</label><input type="password" id="cp-new" maxlength="8" placeholder="••••" style="text-align:center;letter-spacing:4px;font-size:18px"></div>
-          <div><label>Confirm PIN</label><input type="password" id="cp-conf" maxlength="8" placeholder="••••" style="text-align:center;letter-spacing:4px;font-size:18px"></div>
-        </div>
-        <div id="cp-err" style="color:var(--danger);font-size:12px;margin-bottom:.5rem;min-height:16px"></div>
-        <div class="flex"><button class="btn btn-p" onclick="changePIN()">Save New PIN</button><button class="btn btn-g" onclick="document.getElementById(&#39;change-pin-form&#39;).style.display=&#39;none&#39;">Cancel</button></div>
-      </div>
+      <div id="access-rights-list"></div>
+    </div>
+  </div>
+  <!-- MY PIN & RECOVERY — visible to all managers -->
+  <div class="card">
+    <div class="card-hd"><div class="card-title">🔑 My PIN &amp; Recovery</div></div>
+    <div class="card-body">
+      <div id="my-pin-section"></div>
     </div>
   </div>
   <div class="card">
@@ -1340,20 +1330,10 @@ tr:hover td{background:var(--s2)}
 </main>
 <div id="toast" class="">✓ Default gallery set: Deborah Barnard → Harbourside Gallery</div>
 
-<!-- PIN MODAL -->
-<div class="modal-bg" id="pin-overlay">
-  <div class="modal-box">
-    <div style="width:48px;height:48px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .9rem;font-size:22px">🔐</div>
-    <div style="font-size:16px;font-weight:bold;color:var(--primary);margin-bottom:.2rem">Manager Access</div>
-    <div style="font-size:12px;color:var(--tm);margin-bottom:1.1rem">Enter your PIN to unlock reports &amp; settings</div>
-    <input type="password" id="pin-input" maxlength="8" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:8px;margin-bottom:.6rem" onkeydown="if(event.key===&#39;Enter&#39;)checkPIN()">
-    <div id="pin-err" style="color:var(--danger);font-size:12px;margin-bottom:.5rem;min-height:16px"></div>
-    <div class="flex" style="justify-content:center">
-      <button class="btn btn-p" onclick="checkPIN()">Unlock</button>
-      <button class="btn btn-g" onclick="closePINModal()">Cancel</button>
-    </div>
-    <div style="margin-top:.9rem;font-size:11px;color:var(--tl)">Default PIN: <strong>1234</strong> — change in Manage</div>
-  </div>
+<!-- PIN MODAL — replaced by employee gate; stub kept for safety -->
+<div style="display:none" id="pin-overlay">
+  <input type="password" id="pin-input">
+  <div id="pin-err"></div>
 </div>
 
 <script>
@@ -1363,24 +1343,27 @@ tr:hover td{background:var(--s2)}
 // ================================================================
 // SUPABASE CONFIG — paste your values below
 // ================================================================
-const SUPABASE_URL = "https://qptovgyjecexnwjvhvlo.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable__O-7XSwAQ3iP7ezAeFLNeg_oifyiU9H";
+const SUPABASE_URL = "PASTE_MY_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_MY_PUBLISHABLE_API_KEY_HERE";
 
 // ================================================================
 // DEFAULT DB STRUCTURE
 // ================================================================
-const DB_KEY = 'fineart_ts_v6'; // used only for localStorage cache & manager PIN
+const DB_KEY = 'fineart_ts_v6'; // used only for localStorage cache
 const DB_DEFAULTS = {
-  employees:['Cobus','Clivia','Deborah','Heinrich','Leigh','Linda','Mdi','Michelle','Obey','Sam','Sharon','Susan'],
-  outlets:['Dockside','Eikestad Gallery','Harbourside Gallery','Vineyard Gallery'],
+  employees:['Clivia Saais','Deborah Barnard','Heinrich','Iridium','Jonathan','Leigh Horne','Linda Chipps','Mdi','Michelle Prinsloo','Obey Saruwaka','Russel','Sharon Nell','Simba Kasuso','Suzan van Rensburg'],
+  outlets:['Dockside Gallery','Eikestad Gallery','Harbour Side Gallery','Vineyard Gallery Franschhoek'],
   timesheets:{}, approvals:{}, customPH:{}, empPins:{}, phOverrides:{},
-  empDefaults:{'Cobus':'Vineyard Gallery','Clivia':'Eikestad Gallery','Deborah':'Dockside','Heinrich':'Harbourside Gallery','Leigh':'Vineyard Gallery','Linda':'Eikestad Gallery','Mdi':'Dockside','Michelle':'Harbourside Gallery','Obey':'Vineyard Gallery','Sam':'Dockside','Sharon':'Eikestad Gallery','Susan':'Vineyard Gallery'},
+  empDefaults:{'Clivia Saais':'Eikestad Gallery','Deborah Barnard':'Harbour Side Gallery','Heinrich':'Eikestad Gallery','Iridium':'Dockside Gallery','Jonathan':'Dockside Gallery','Leigh Horne':'Dockside Gallery','Linda Chipps':'Harbour Side Gallery','Mdi':'Eikestad Gallery','Michelle Prinsloo':'Harbour Side Gallery','Obey Saruwaka':'Vineyard Gallery Franschhoek','Russel':'Dockside Gallery','Sharon Nell':'Dockside Gallery','Simba Kasuso':'Dockside Gallery','Suzan van Rensburg':'Vineyard Gallery Franschhoek'},
+  managerAccess:{'Iridium':true},
+  superMgrAccess:{'Jonathan':true,'Russel':true},
+  superMgrEmails:{'Jonathan':'','Russel':''},
   hiddenPeriods:[], periodConfig:{startYear:2026,startMonth:4,numMonths:55},
   tradingHours:{
-    'Dockside':{Mon:{o:'09:00',c:'19:00'},Tue:{o:'09:00',c:'19:00'},Wed:{o:'09:00',c:'19:00'},Thu:{o:'09:00',c:'19:00'},Fri:{o:'09:00',c:'19:00'},Sat:{o:'09:00',c:'19:00'},Sun:{o:'09:00',c:'19:00'}},
+    'Dockside Gallery':{Mon:{o:'09:00',c:'19:00'},Tue:{o:'09:00',c:'19:00'},Wed:{o:'09:00',c:'19:00'},Thu:{o:'09:00',c:'19:00'},Fri:{o:'09:00',c:'19:00'},Sat:{o:'09:00',c:'19:00'},Sun:{o:'09:00',c:'19:00'}},
     'Eikestad Gallery':{Mon:{o:'09:00',c:'18:00'},Tue:{o:'09:00',c:'18:00'},Wed:{o:'09:00',c:'18:00'},Thu:{o:'09:00',c:'18:00'},Fri:{o:'09:00',c:'18:00'},Sat:{o:'09:00',c:'18:00'},Sun:{o:'09:00',c:'18:00'}},
-    'Harbourside Gallery':{Mon:{o:'09:00',c:'17:00'},Tue:{o:'09:00',c:'17:00'},Wed:{o:'09:00',c:'17:00'},Thu:{o:'09:00',c:'17:00'},Fri:{o:'09:00',c:'17:00'},Sat:{o:'09:00',c:'17:00'},Sun:{o:'09:00',c:'14:00'}},
-    'Vineyard Gallery':{Mon:{o:'09:00',c:'17:00'},Tue:{o:'09:00',c:'17:00'},Wed:{o:'09:00',c:'17:00'},Thu:{o:'09:00',c:'17:00'},Fri:{o:'09:00',c:'17:00'},Sat:{o:'09:00',c:'17:00'},Sun:{o:'09:00',c:'17:00'}}
+    'Harbour Side Gallery':{Mon:{o:'09:00',c:'17:00'},Tue:{o:'09:00',c:'17:00'},Wed:{o:'09:00',c:'17:00'},Thu:{o:'09:00',c:'17:00'},Fri:{o:'09:00',c:'17:00'},Sat:{o:'09:00',c:'17:00'},Sun:{o:'09:00',c:'14:00'}},
+    'Vineyard Gallery Franschhoek':{Mon:{o:'09:00',c:'17:00'},Tue:{o:'09:00',c:'17:00'},Wed:{o:'09:00',c:'17:00'},Thu:{o:'09:00',c:'17:00'},Fri:{o:'09:00',c:'17:00'},Sat:{o:'09:00',c:'17:00'},Sun:{o:'09:00',c:'17:00'}}
   }
 };
 let db = JSON.parse(JSON.stringify(DB_DEFAULTS));
@@ -1414,6 +1397,9 @@ async function loadDB(){
       const p = rows[0].data;
       db = { ...DB_DEFAULTS, ...p };
       db.empDefaults = { ...DB_DEFAULTS.empDefaults, ...(p.empDefaults||{}) };
+      db.managerAccess = { ...(p.managerAccess||{}) };
+      db.superMgrAccess = { ...(p.superMgrAccess||DB_DEFAULTS.superMgrAccess) };
+      db.superMgrEmails = { ...(DB_DEFAULTS.superMgrEmails||{}), ...(p.superMgrEmails||{}) };
       // Also cache locally
       try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
       console.log('Loaded from Supabase');
@@ -1446,7 +1432,7 @@ async function loadDB(){
     // Fall back to localStorage cache
     try{
       const r = localStorage.getItem(DB_KEY);
-      if(r){ const p=JSON.parse(r); db={...DB_DEFAULTS,...p}; db.empDefaults={...DB_DEFAULTS.empDefaults,...(p.empDefaults||{})}; }
+      if(r){ const p=JSON.parse(r); db={...DB_DEFAULTS,...p}; db.empDefaults={...DB_DEFAULTS.empDefaults,...(p.empDefaults||{})}; db.managerAccess={...(p.managerAccess||{})}; db.superMgrAccess={...(p.superMgrAccess||DB_DEFAULTS.superMgrAccess)}; db.superMgrEmails={...(DB_DEFAULTS.superMgrEmails||{}),...(p.superMgrEmails||{})}; }
     }catch(e2){}
   }
 }
@@ -1574,18 +1560,40 @@ function currentPeriodKey(){
 }
 
 // ================================================================
-// ACCESS CONTROL — MANAGER
+// ACCESS CONTROL — ROLE-BASED (Super Manager / Manager / Employee)
 // ================================================================
-let _isMgr=false,_pendingPage=null,_empUnlocked=null;
-function getPin(){return localStorage.getItem('fa_pin')||'1234';}
+// Roles: 'superMgr' | 'manager' | 'employee' | null
+let _role=null,_empUnlocked=null,_currentUser=null,_pendingPage=null;
+
+// Clear legacy fa_pin on load — silently remove it
+try{localStorage.removeItem('fa_pin');}catch(e){}
+
+function isSuperMgr(){return _role==='superMgr';}
+function isMgr(){return _role==='manager'||_role==='superMgr';}
+// Legacy alias used by existing code
+function get_isMgr(){return isMgr();}
+Object.defineProperty(window,'_isMgr',{get:()=>isMgr()});
+
+function getRoleForUser(name){
+  if(db.superMgrAccess&&db.superMgrAccess[name])return'superMgr';
+  if(db.managerAccess&&db.managerAccess[name])return'manager';
+  return'employee';
+}
 
 function applyAccess(){
-  document.querySelectorAll('.mgr-only').forEach(el=>el.style.setProperty('display',_isMgr?'inline-flex':'none','important'));
-  document.getElementById('lock-icon').textContent=_isMgr?'🔓':'🔒';
-  document.getElementById('lock-label').textContent=_isMgr?'Lock':'Login';
-  document.getElementById('lock-btn').style.color=_isMgr?'rgba(255,255,255,.45)':'var(--accent)';
-  document.getElementById('lock-btn').style.borderColor=_isMgr?'rgba(255,255,255,.2)':'var(--accent)';
-  if(_isMgr){
+  const mgr=isMgr(),sm=isSuperMgr();
+  // .mgr-only: visible to managers AND super managers
+  document.querySelectorAll('.mgr-only').forEach(el=>el.style.setProperty('display',mgr?'inline-flex':'none','important'));
+  // .supermgr-only: visible to super managers only (Manage tab nav button handled separately)
+  document.querySelectorAll('.supermgr-only').forEach(el=>el.style.setProperty('display',sm?'inline-flex':'none','important'));
+  document.getElementById('lock-icon').textContent=mgr?'🔓':'🔒';
+  document.getElementById('lock-label').textContent=mgr?'Lock':'Login';
+  document.getElementById('lock-btn').style.color=mgr?'rgba(255,255,255,.45)':'var(--accent)';
+  document.getElementById('lock-btn').style.borderColor=mgr?'rgba(255,255,255,.2)':'var(--accent)';
+  // Update Manage tab button visibility: only super managers see it
+  const manageBtn=document.querySelector('.nb[onclick*="manage"]');
+  if(manageBtn)manageBtn.style.setProperty('display',sm?'inline-flex':'none','important');
+  if(mgr){
     document.getElementById('emp-pin-gate').style.display='none';
     loadEntryForm();
   } else {
@@ -1593,47 +1601,20 @@ function applyAccess(){
   }
 }
 function toggleAccess(){
-  if(_isMgr){_isMgr=false;_empUnlocked=null;applyAccess();showPage('entry');toast('Locked');}
-  else openPINModal(null);
-}
-function openPINModal(page){
-  _pendingPage=page;
-  document.getElementById('pin-input').value='';
-  document.getElementById('pin-err').textContent='';
-  document.getElementById('pin-overlay').style.display='flex';
-  setTimeout(()=>document.getElementById('pin-input').focus(),120);
-}
-function closePINModal(){document.getElementById('pin-overlay').style.display='none';_pendingPage=null;}
-function checkPIN(){
-  const v=document.getElementById('pin-input').value.trim();
-  if(v===getPin()){
-    _isMgr=true;applyAccess();
-    document.getElementById('pin-overlay').style.display='none';
-    toast('✓ Manager access unlocked');
-    if(_pendingPage)showPage(_pendingPage);
-    _pendingPage=null;
-  } else {
-    document.getElementById('pin-err').textContent='Incorrect PIN';
-    document.getElementById('pin-input').value='';
-    document.getElementById('pin-input').focus();
-  }
-}
-function openChangePIN(){document.getElementById('change-pin-form').style.display='block';document.getElementById('cp-cur').focus();}
-function changePIN(){
-  const cur=document.getElementById('cp-cur').value,nw=document.getElementById('cp-new').value,conf=document.getElementById('cp-conf').value;
-  const err=document.getElementById('cp-err');
-  if(cur!==getPin()){err.textContent='Current PIN incorrect';return;}
-  if(!/^\d{4,8}$/.test(nw)){err.textContent='New PIN must be 4-8 digits';return;}
-  if(nw!==conf){err.textContent='PINs do not match';return;}
-  localStorage.setItem('fa_pin',nw);
-  document.getElementById('change-pin-form').style.display='none';
-  ['cp-cur','cp-new','cp-conf'].forEach(id=>document.getElementById(id).value='');
-  err.textContent='';toast('✓ PIN changed');
+  if(isMgr()){_role=null;_currentUser=null;_empUnlocked=null;applyAccess();showPage('entry');toast('Locked');}
+  else openEmpGate();
 }
 
+// No more separate PIN modal — all access via employee gate
+function openPINModal(page){_pendingPage=page;openEmpGate();}
+function closePINModal(){document.getElementById('emp-pin-gate').style.display='none';_pendingPage=null;}
+function checkPIN(){checkEmpPIN();}
+
 function showPage(name){
-  const mgrPages=['summary','calmonth','slicedice','publicholidays','periods','manage'];
-  if(mgrPages.includes(name)&&!_isMgr){openPINModal(name);return;}
+  const mgrPages=['summary','calmonth','slicedice','publicholidays','periods'];
+  const superPages=['manage'];
+  if(mgrPages.includes(name)&&!isMgr()){openEmpGate();_pendingPage=name;return;}
+  if(superPages.includes(name)&&!isSuperMgr()){toast('Super Manager access required');return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
@@ -1651,8 +1632,7 @@ function showPage(name){
 // ================================================================
 function openEmpGate(){
   const sel=document.getElementById('gate-emp-select');
-  sel.innerHTML=`<option value="__MANAGER__">🔐 Manager</option>`+
-    sortArr(db.employees).map(e=>`<option value="${e}">${e}</option>`).join('');
+  sel.innerHTML=sortArr(db.employees).map(e=>`<option value="${e}">${e}</option>`).join('');
   document.getElementById('emp-pin-input').value='';
   document.getElementById('emp-pin-err').textContent='';
   document.getElementById('emp-setup-pin1').value='';
@@ -1667,14 +1647,15 @@ function onGateEmpChange(){
   document.getElementById('emp-pin-input').value='';
   document.getElementById('emp-pin-err').textContent='';
   document.getElementById('emp-setup-err').textContent='';
-  if(emp==='__MANAGER__'){
-    document.getElementById('gate-pin-section').style.display='block';
-    document.getElementById('gate-setup-section').style.display='none';
-    document.getElementById('gate-forgot-mgr').style.display='block';
-    setTimeout(()=>document.getElementById('emp-pin-input').focus(),80);
-    return;
+  // Show/hide forgot PIN link for super managers only
+  const isSM=db.superMgrAccess&&db.superMgrAccess[emp];
+  const forgotDiv=document.getElementById('gate-forgot-mgr');
+  if(isSM&&db.superMgrEmails&&db.superMgrEmails[emp]){
+    forgotDiv.style.display='block';
+    forgotDiv.innerHTML=`<a href="#" onclick="sendSuperMgrReset('${emp}');return false;" style="color:var(--accent)">📧 Email me a reset code</a>`;
+  } else {
+    forgotDiv.style.display='none';
   }
-  document.getElementById('gate-forgot-mgr').style.display='none';
   const hasPIN=!!(db.empPins&&db.empPins[emp]);
   if(hasPIN){
     document.getElementById('gate-pin-section').style.display='block';
@@ -1690,7 +1671,7 @@ function onGateEmpChange(){
 
 function onEmpChange(){
   const emp=document.getElementById('entry-emp').value;
-  if(_isMgr){loadEntryForm();return;}
+  if(isMgr()){loadEntryForm();return;}
   if(emp===_empUnlocked){loadEntryForm();return;}
   _empUnlocked=null;
   openEmpGate();
@@ -1701,32 +1682,31 @@ function onEmpChange(){
 function checkEmpPIN(){
   const emp=document.getElementById('gate-emp-select').value;
   const entered=document.getElementById('emp-pin-input').value.trim();
-  // Manager login
-  if(emp==='__MANAGER__'){
-    if(entered===getPin()){
-      _isMgr=true;
-      document.getElementById('emp-pin-gate').style.display='none';
-      applyAccess();
-      toast('✓ Manager access unlocked');
-    } else {
-      document.getElementById('emp-pin-err').textContent='Incorrect manager PIN';
-      document.getElementById('emp-pin-input').value='';
-      document.getElementById('emp-pin-input').focus();
-    }
+  if(!emp||emp===''){return;}
+  // Authenticate via empPins stored in Supabase
+  const stored=db.empPins&&db.empPins[emp];
+  if(!stored){
+    // No PIN set yet — shouldn't reach here (setup flow intercepts), safety check
+    document.getElementById('emp-pin-err').textContent='No PIN set. Please set one below.';
     return;
   }
-  // Employee login
-  const stored=db.empPins&&db.empPins[emp];
-  if(entered===stored){
-    _empUnlocked=emp;
-    document.getElementById('emp-pin-gate').style.display='none';
-    document.getElementById('entry-emp').value=emp;
-    loadEntryForm();
-  } else {
+  if(entered!==stored){
     document.getElementById('emp-pin-err').textContent='Incorrect PIN. Ask your manager to reset it.';
     document.getElementById('emp-pin-input').value='';
     document.getElementById('emp-pin-input').focus();
+    return;
   }
+  // PIN correct — determine role
+  _currentUser=emp;
+  _role=getRoleForUser(emp);
+  _empUnlocked=emp;
+  document.getElementById('emp-pin-gate').style.display='none';
+  document.getElementById('entry-emp').value=emp;
+  applyAccess();
+  const roleLabel=isSuperMgr()?'Super Manager':isMgr()?'Manager':'';
+  toast('✓ Welcome, '+emp+(roleLabel?' ('+roleLabel+')':''));
+  if(_pendingPage){const pg=_pendingPage;_pendingPage=null;showPage(pg);}
+  else loadEntryForm();
 }
 
 async function saveEmpPIN(){
@@ -1941,7 +1921,7 @@ function getSummaryData(pk){
 }
 
 async function approvePeriod(){
-  if(!_isMgr){toast('Manager access required');return;}
+  if(!isMgr()){toast('Manager access required');return;}
   const pk=document.getElementById('sum-period').value;
   const period=allPeriods.find(p=>p.key===pk);
   if(!confirm(`Approve and lock period:\n${period?.label}?\n\nEmployees will no longer be able to edit their hours.`))return;
@@ -2580,10 +2560,18 @@ function renderManage(){
         <div style="font-size:11px;color:var(--tm)">${periods} period(s) &nbsp;|&nbsp; PIN: ${hasPIN?'<span style="color:var(--ok)">✓ Set</span>':'<em style="color:var(--tl)">not set</em>'} &nbsp;|&nbsp; Default gallery: <strong>${def||'—'}</strong></div>
       </div>
       <div class="flex gap-sm" id="emp-btns-${idx}">
+        <button class="btn btn-g btn-sm" onclick="showRenameEmp(${idx})">✏ Rename</button>
         <button class="btn btn-g btn-sm" onclick="showEmpDefGallery(${idx})">🏛 Gallery</button>
         <button class="btn btn-g btn-sm" onclick="showResetPIN(${idx})">🔑 Reset PIN</button>
         <button class="btn btn-d btn-sm" onclick="showRemoveEmp(${idx})">Remove</button>
       </div>
+    </div>
+    <div id="emp-rename-div-${idx}" style="display:none;padding:8px 14px;background:#fff8e1;border:1px solid #fcd34d;border-radius:var(--r);margin-bottom:5px;font-size:13px">
+      Rename <strong>${emp}</strong> to:
+      <input type="text" id="emp-rename-${idx}" maxlength="60" placeholder="New name" style="width:160px;font-size:13px;padding:5px 8px;display:inline-block;margin:0 6px">
+      <button class="btn btn-p btn-sm" onclick="doRenameEmp(${idx})">Save</button>
+      <button class="btn btn-g btn-sm" onclick="cancelEmpAction(${idx})">Cancel</button>
+      <span id="emp-rename-err-${idx}" style="color:var(--danger);font-size:11px;margin-left:6px"></span>
     </div>
     <div id="emp-confirm-${idx}" style="display:none;padding:8px 14px;background:#fef2f2;border:1px solid #f5c6c6;border-radius:var(--r);margin-bottom:5px;font-size:13px">
       Remove <strong>${emp}</strong>? Data kept.
@@ -2610,12 +2598,22 @@ function renderManage(){
     return`<div class="mi" id="outlet-row-${idx}">
       <div><div style="font-weight:bold;color:var(--primary)">${o}</div>
       <div style="font-size:11px;color:var(--tm)">${count} timesheets</div></div>
-      <button class="btn btn-d btn-sm" onclick="showRemoveOutlet(${idx})">Remove</button>
+      <div class="flex gap-sm">
+        <button class="btn btn-g btn-sm" onclick="showRenameOutlet(${idx})">✏ Rename</button>
+        <button class="btn btn-d btn-sm" onclick="showRemoveOutlet(${idx})">Remove</button>
+      </div>
+    </div>
+    <div id="outlet-rename-div-${idx}" style="display:none;padding:8px 14px;background:#fff8e1;border:1px solid #fcd34d;border-radius:var(--r);margin-bottom:5px;font-size:13px">
+      Rename <strong>${o}</strong> to:
+      <input type="text" id="outlet-rename-${idx}" maxlength="80" placeholder="New gallery name" style="width:180px;font-size:13px;padding:5px 8px;display:inline-block;margin:0 6px">
+      <button class="btn btn-p btn-sm" onclick="doRenameOutlet(${idx})">Save</button>
+      <button class="btn btn-g btn-sm" onclick="cancelOutletAction(${idx})">Cancel</button>
+      <span id="outlet-rename-err-${idx}" style="color:var(--danger);font-size:11px;margin-left:6px"></span>
     </div>
     <div id="outlet-confirm-${idx}" style="display:none;padding:8px 14px;background:#fef2f2;border:1px solid #f5c6c6;border-radius:var(--r);margin-bottom:5px;font-size:13px">
       Remove <strong>${o}</strong>?
       <button class="btn btn-d btn-sm" style="margin-left:8px" onclick="doRemoveOutlet(${idx})">Yes, remove</button>
-      <button class="btn btn-g btn-sm" onclick="document.getElementById('outlet-confirm-${idx}').style.display='none'">Cancel</button>
+      <button class="btn btn-g btn-sm" onclick="cancelOutletAction(${idx})">Cancel</button>
     </div>`;
   }).join('');
 
@@ -2625,9 +2623,92 @@ function renderManage(){
     <div class="sc"><div class="sl">Galleries</div><div class="sv">${db.outlets.length}</div></div>
     <div class="sc"><div class="sl">Periods Entered</div><div class="sv">${ne}</div></div>
     <div class="sc"><div class="sl">Days Entered</div><div class="sv">${nd}</div></div>`;
-  // Load saved email
-  if(db.mgrEmail)document.getElementById('mgr-email').value=db.mgrEmail;
+
+  // Render access rights table
+  const arEl=document.getElementById('access-rights-list');
+  if(arEl){
+    arEl.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:var(--s2)">
+        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid var(--border)">Employee</th>
+        <th style="text-align:center;padding:8px 12px;border-bottom:2px solid var(--border)">Current Role</th>
+        <th style="text-align:center;padding:8px 12px;border-bottom:2px solid var(--border)">Set Role</th>
+
+      </tr></thead>
+      <tbody>${sortArr(db.employees).map((emp,i)=>{
+        const curRole=getRoleForUser(emp);
+        const roleBadge=curRole==='superMgr'?'<span style="background:#c9a96e22;color:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:bold">👑 Super Manager</span>':curRole==='manager'?'<span style="background:var(--fo2);color:var(--fo);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:bold">✓ Manager</span>':'<span style="font-size:11px;color:var(--tl)">Employee</span>';
+        const isSM=curRole==='superMgr';
+
+        // Prevent removing own super manager role
+        const isSelf=(emp===_currentUser);
+        return`<tr style="${i%2===0?'':'background:var(--s2)'}">
+          <td style="padding:8px 12px;font-weight:bold;color:var(--primary)">${emp}</td>
+          <td style="text-align:center;padding:8px 12px">${roleBadge}</td>
+          <td style="text-align:center;padding:8px 12px">
+            <select onchange="setAccessRole('${emp}',this.value)" style="font-size:12px;padding:4px 8px" ${isSelf?'disabled title="Cannot change your own role"':''}>
+              <option value="employee" ${curRole==='employee'?'selected':''}>Employee</option>
+              <option value="manager" ${curRole==='manager'?'selected':''}>Manager</option>
+              <option value="superMgr" ${curRole==='superMgr'?'selected':''}>Super Manager</option>
+            </select>
+          </td>
+
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }
+
+  // Render My PIN section (current user's PIN management)
+  const pinEl=document.getElementById('my-pin-section');
+  if(pinEl&&_currentUser){
+    const hasEmail=db.superMgrEmails&&db.superMgrEmails[_currentUser];
+    const isSM2=isSuperMgr();
+    pinEl.innerHTML=`
+      <div style="font-size:13px;color:var(--tm);margin-bottom:1rem">Logged in as <strong>${_currentUser}</strong> (${isSuperMgr()?'Super Manager':isMgr()?'Manager':'Employee'}).
+        Change your PIN below. ${isSM2?'Also set a recovery email so you can reset your PIN if forgotten.':''}</div>
+      <div class="g2 mb1" style="max-width:520px">
+        <div><label>Current PIN</label><input type="password" id="my-cp-cur" maxlength="8" placeholder="••••" style="text-align:center;letter-spacing:4px;font-size:18px"></div>
+        <div><label>New PIN (4–8 digits)</label><input type="password" id="my-cp-new" maxlength="8" placeholder="••••" style="text-align:center;letter-spacing:4px;font-size:18px"></div>
+        <div><label>Confirm PIN</label><input type="password" id="my-cp-conf" maxlength="8" placeholder="••••" style="text-align:center;letter-spacing:4px;font-size:18px"></div>
+        <div style="align-self:flex-end"><button class="btn btn-p" onclick="changeMyPIN()">Save New PIN</button></div>
+      </div>
+      <div id="my-cp-err" style="color:var(--danger);font-size:12px;margin-bottom:.5rem;min-height:16px"></div>
+      ${isSM2?`<div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+        <label>My Recovery Email (for PIN reset)</label>
+        <div class="flex mt1">
+          <input type="email" id="my-recovery-email" value="${(db.superMgrEmails&&db.superMgrEmails[_currentUser])||''}" placeholder="your@email.com" style="flex:1;font-size:14px">
+          <button class="btn btn-p" onclick="saveMyRecoveryEmail()">Save Email</button>
+        </div>
+        <div style="font-size:11px;color:var(--tm);margin-top:4px">Used to receive a reset code if you forget your PIN.</div>
+      </div>`:''}`;
+  }
+
   renderTradingHoursGrid();
+}
+
+async function changeMyPIN(){
+  const cur=document.getElementById('my-cp-cur').value;
+  const nw=document.getElementById('my-cp-new').value;
+  const conf=document.getElementById('my-cp-conf').value;
+  const err=document.getElementById('my-cp-err');
+  if(!_currentUser){err.textContent='Not logged in';return;}
+  const stored=db.empPins&&db.empPins[_currentUser];
+  if(cur!==stored){err.textContent='Current PIN incorrect';return;}
+  if(!/^\d{4,8}$/.test(nw)){err.textContent='New PIN must be 4-8 digits';return;}
+  if(nw!==conf){err.textContent='PINs do not match';return;}
+  if(!db.empPins)db.empPins={};
+  db.empPins[_currentUser]=nw;
+  await saveDB();err.textContent='';
+  document.getElementById('my-cp-cur').value='';
+  document.getElementById('my-cp-new').value='';
+  document.getElementById('my-cp-conf').value='';
+  toast('✓ PIN changed');
+}
+
+async function saveMyRecoveryEmail(){
+  if(!_currentUser||!isSuperMgr())return;
+  const email=document.getElementById('my-recovery-email').value.trim();
+  if(!db.superMgrEmails)db.superMgrEmails={};
+  db.superMgrEmails[_currentUser]=email;
+  await saveDB();toast('✓ Recovery email saved');
 }
 
 function showRemoveEmp(idx){
@@ -2650,6 +2731,7 @@ function cancelEmpAction(idx){
   document.getElementById(`emp-confirm-${idx}`).style.display='none';
   document.getElementById(`emp-pin-reset-${idx}`).style.display='none';
   document.getElementById(`emp-defgal-${idx}`).style.display='none';
+  const renDiv=document.getElementById(`emp-rename-div-${idx}`);if(renDiv)renDiv.style.display='none';
 }
 async function doSetEmpDefGallery(idx){
   const emp=sortArr(db.employees)[idx];if(!emp)return;
@@ -2667,6 +2749,7 @@ async function doRemoveEmp(idx){
   await saveDB();populateSelects();renderManage();toast('Removed: '+emp);
 }
 function showRemoveOutlet(idx){
+  cancelOutletAction(idx);
   document.getElementById(`outlet-confirm-${idx}`).style.display='block';
 }
 async function doRemoveOutlet(idx){
@@ -2701,74 +2784,140 @@ async function addOutlet(){
   await saveDB();populateSelects();renderManage();
   document.getElementById('add-outlet-form').style.display='none';document.getElementById('new-outlet-name').value='';toast('✓ Added: '+n);
 }
-function openChangePIN(){document.getElementById('change-pin-form').style.display='block';document.getElementById('cp-cur').focus();}
-function changePIN(){
-  const cur=document.getElementById('cp-cur').value,nw=document.getElementById('cp-new').value,conf=document.getElementById('cp-conf').value;
-  const err=document.getElementById('cp-err');
-  if(cur!==getPin()){err.textContent='Current PIN incorrect';return;}
-  if(!/^\d{4,8}$/.test(nw)){err.textContent='New PIN must be 4-8 digits';return;}
-  if(nw!==conf){err.textContent='PINs do not match';return;}
-  localStorage.setItem('fa_pin',nw);
-  document.getElementById('change-pin-form').style.display='none';
-  ['cp-cur','cp-new','cp-conf'].forEach(id=>document.getElementById(id).value='');
-  err.textContent='';toast('✓ Manager PIN changed');
-}
-
-async function saveMgrEmail(){
-  const email=document.getElementById('mgr-email').value.trim();
-  if(!email){toast('Please enter an email address');return;}
-  db.mgrEmail=email;await saveDB();toast('✓ Recovery email saved: '+email);
-}
-
-async function sendPINReset(){
-  const email=db.mgrEmail;
+// Super Manager PIN reset via email
+async function sendSuperMgrReset(emp){
+  const email=db.superMgrEmails&&db.superMgrEmails[emp];
   if(!email){
-    // Show message in the gate
-    document.getElementById('emp-pin-err').textContent='No recovery email set. Go to Manage → PIN & Recovery to add one.';
+    document.getElementById('emp-pin-err').textContent='No recovery email set for your account. Ask another super manager to reset your PIN.';
     return;
   }
-  // Generate a 6-digit reset code and store it temporarily
   const code=Math.floor(100000+Math.random()*900000).toString();
-  db._resetCode=code;db._resetExpiry=Date.now()+15*60*1000; // 15 min
+  if(!db._smResetCodes)db._smResetCodes={};
+  db._smResetCodes[emp]={code,expiry:Date.now()+15*60*1000};
   await saveDB();
-  // Open mailto
-  const subject=encodeURIComponent('Fine Art Gallery — Manager PIN Reset');
+  const subject=encodeURIComponent('Fine Art Gallery — PIN Reset');
   const body=encodeURIComponent(
-    `Your PIN reset code is: ${code}\n\n`+
-    `This code expires in 15 minutes.\n\n`+
-    `To use it:\n`+
-    `1. Open the timesheet app\n`+
-    `2. Select Manager in the login screen\n`+
-    `3. Click "Use reset code"\n`+
-    `4. Enter code ${code} and your new PIN\n\n`+
-    `If you did not request this, ignore this email.`
+    `Your PIN reset code is: ${code}\n\nThis code expires in 15 minutes.\n\nTo use it: open the app, select your name (${emp}), and click "Use reset code".\n\nIf you did not request this, ignore this email.`
   );
   window.location.href=`mailto:${email}?subject=${subject}&body=${body}`;
-  // Show the reset code entry UI in the gate
   setTimeout(()=>{
-    document.getElementById('gate-forgot-mgr').innerHTML=`
+    const forgotDiv=document.getElementById('gate-forgot-mgr');
+    forgotDiv.innerHTML=`
       <div style="margin-top:.75rem;padding:.75rem;background:#e8f0fe;border-radius:var(--r);font-size:12px">
-        <div style="margin-bottom:.5rem;color:var(--primary)">A reset code has been emailed to <strong>${email}</strong>. Enter it below:</div>
-        <input type="text" id="reset-code-inp" maxlength="6" placeholder="6-digit code" style="width:120px;text-align:center;font-size:16px;letter-spacing:4px;padding:6px;display:inline-block;margin-right:6px">
-        <input type="password" id="reset-new-pin" maxlength="8" placeholder="New PIN" style="width:100px;text-align:center;font-size:14px;padding:6px;display:inline-block;margin-right:6px">
-        <button class="btn btn-p btn-sm" onclick="applyPINReset()">Apply</button>
+        <div style="margin-bottom:.5rem;color:var(--primary)">Code sent to <strong>${email}</strong>. Enter it below:</div>
+        <input type="text" id="reset-code-inp" maxlength="6" placeholder="6-digit code" style="width:110px;text-align:center;font-size:15px;letter-spacing:4px;padding:5px;display:inline-block;margin-right:5px">
+        <input type="password" id="reset-new-pin" maxlength="8" placeholder="New PIN" style="width:95px;text-align:center;font-size:13px;padding:5px;display:inline-block;margin-right:5px">
+        <button class="btn btn-p btn-sm" onclick="applySuperMgrReset('${emp}')">Apply</button>
         <div id="reset-err" style="color:var(--danger);font-size:11px;margin-top:4px;min-height:14px"></div>
       </div>`;
   },500);
 }
-
-async function applyPINReset(){
+async function applySuperMgrReset(emp){
   const code=document.getElementById('reset-code-inp').value.trim();
   const newPin=document.getElementById('reset-new-pin').value.trim();
   const err=document.getElementById('reset-err');
-  if(!db._resetCode||Date.now()>db._resetExpiry){err.textContent='Reset code expired. Request a new one.';return;}
-  if(code!==db._resetCode){err.textContent='Incorrect code.';return;}
+  const entry=db._smResetCodes&&db._smResetCodes[emp];
+  if(!entry||Date.now()>entry.expiry){err.textContent='Reset code expired. Request a new one.';return;}
+  if(code!==entry.code){err.textContent='Incorrect code.';return;}
   if(!/^\d{4,8}$/.test(newPin)){err.textContent='PIN must be 4-8 digits.';return;}
-  localStorage.setItem('fa_pin',newPin);
-  delete db._resetCode;delete db._resetExpiry;await saveDB();
+  if(!db.empPins)db.empPins={};
+  db.empPins[emp]=newPin;
+  delete db._smResetCodes[emp];
+  await saveDB();
   document.getElementById('emp-pin-gate').style.display='none';
-  _isMgr=true;applyAccess();
-  toast('✓ PIN reset successfully. You are now logged in.');
+  _currentUser=emp;_role=getRoleForUser(emp);_empUnlocked=emp;
+  applyAccess();
+  toast('✓ PIN reset. Welcome, '+emp+'!');
+}
+
+// Grant/revoke access roles (super managers only)
+async function setAccessRole(emp,role){
+  if(!db.managerAccess)db.managerAccess={};
+  if(!db.superMgrAccess)db.superMgrAccess={};
+  // Remove from all roles first
+  delete db.managerAccess[emp];
+  delete db.superMgrAccess[emp];
+  if(role==='manager')db.managerAccess[emp]=true;
+  else if(role==='superMgr')db.superMgrAccess[emp]=true;
+  await saveDB();renderManage();
+  toast('✓ Access updated for '+emp);
+}
+
+// Save super manager recovery email (from their own profile in Manage)
+async function saveSuperMgrEmail(emp){
+  const inp=document.getElementById(`smgr-email-${emp}`);
+  if(!inp)return;
+  const email=inp.value.trim();
+  if(!db.superMgrEmails)db.superMgrEmails={};
+  db.superMgrEmails[emp]=email;
+  await saveDB();toast('✓ Recovery email saved for '+emp);
+}
+
+// Rename employee (cascade across all data)
+async function doRenameEmp(idx){
+  const emps=sortArr(db.employees);
+  const oldName=emps[idx];if(!oldName)return;
+  const newName=document.getElementById(`emp-rename-${idx}`).value.trim();
+  const errEl=document.getElementById(`emp-rename-err-${idx}`);
+  if(!newName){errEl.textContent='Name cannot be empty';return;}
+  if(newName===oldName){cancelEmpAction(idx);return;}
+  if(db.employees.some(e=>e.toLowerCase()===newName.toLowerCase()&&e!==oldName)){errEl.textContent='Name already exists';return;}
+  // Cascade rename
+  db.employees=db.employees.map(e=>e===oldName?newName:e);
+  if(db.empPins&&db.empPins[oldName]){db.empPins[newName]=db.empPins[oldName];delete db.empPins[oldName];}
+  if(db.empDefaults&&db.empDefaults[oldName]){db.empDefaults[newName]=db.empDefaults[oldName];delete db.empDefaults[oldName];}
+  if(db.managerAccess&&db.managerAccess[oldName]){db.managerAccess[newName]=db.managerAccess[oldName];delete db.managerAccess[oldName];}
+  if(db.superMgrAccess&&db.superMgrAccess[oldName]){db.superMgrAccess[newName]=db.superMgrAccess[oldName];delete db.superMgrAccess[oldName];}
+  if(db.superMgrEmails&&db.superMgrEmails[oldName]){db.superMgrEmails[newName]=db.superMgrEmails[oldName];delete db.superMgrEmails[oldName];}
+  // Rename timesheet keys
+  const newTS={};
+  Object.entries(db.timesheets).forEach(([k,v])=>{newTS[k.startsWith(oldName+'|')?newName+'|'+k.slice(oldName.length+1):k]=v;});
+  db.timesheets=newTS;
+  const newAppr={};
+  Object.entries(db.approvals||{}).forEach(([k,v])=>{newAppr[k.startsWith(oldName+'|')?newName+'|'+k.slice(oldName.length+1):k]=v;});
+  db.approvals=newAppr;
+  db.employees=sortArr(db.employees);
+  if(_currentUser===oldName){_currentUser=newName;_empUnlocked=newName;}
+  await saveDB();populateSelects();renderManage();toast('✓ Renamed: '+oldName+' → '+newName);
+}
+
+// Rename gallery (cascade across all data)
+async function doRenameOutlet(idx){
+  const outlets=sortArr(db.outlets);
+  const oldName=outlets[idx];if(!oldName)return;
+  const newName=document.getElementById(`outlet-rename-${idx}`).value.trim();
+  const errEl=document.getElementById(`outlet-rename-err-${idx}`);
+  if(!newName){errEl.textContent='Name cannot be empty';return;}
+  if(newName===oldName){cancelOutletAction(idx);return;}
+  if(db.outlets.some(o=>o.toLowerCase()===newName.toLowerCase()&&o!==oldName)){errEl.textContent='Name already exists';return;}
+  // Cascade rename
+  db.outlets=db.outlets.map(o=>o===oldName?newName:o);
+  Object.entries(db.empDefaults||{}).forEach(([k,v])=>{if(v===oldName)db.empDefaults[k]=newName;});
+  if(db.tradingHours&&db.tradingHours[oldName]){db.tradingHours[newName]=db.tradingHours[oldName];delete db.tradingHours[oldName];}
+  // Cascade into timesheets: period-level outlet and per-day outlet
+  Object.values(db.timesheets||{}).forEach(ts=>{
+    if(ts.outlet===oldName)ts.outlet=newName;
+    Object.values(ts.days||{}).forEach(d=>{if(d.outlet===oldName)d.outlet=newName;});
+  });
+  db.outlets=sortArr(db.outlets);
+  await saveDB();populateSelects();renderManage();toast('✓ Renamed: '+oldName+' → '+newName);
+}
+
+function showRenameEmp(idx){
+  const emps=sortArr(db.employees);
+  cancelEmpAction(idx);
+  const renDiv=document.getElementById(`emp-rename-div-${idx}`);
+  if(renDiv){renDiv.style.display='block';document.getElementById(`emp-rename-${idx}`).value=emps[idx];document.getElementById(`emp-rename-${idx}`).focus();}
+}
+function showRenameOutlet(idx){
+  const outlets=sortArr(db.outlets);
+  cancelOutletAction(idx);
+  const renDiv=document.getElementById(`outlet-rename-div-${idx}`);
+  if(renDiv){renDiv.style.display='block';document.getElementById(`outlet-rename-${idx}`).value=outlets[idx];document.getElementById(`outlet-rename-${idx}`).focus();}
+}
+function cancelOutletAction(idx){
+  document.getElementById(`outlet-confirm-${idx}`).style.display='none';
+  const renDiv=document.getElementById(`outlet-rename-div-${idx}`);if(renDiv)renDiv.style.display='none';
 }
 
 // ================================================================
@@ -2790,9 +2939,24 @@ function exportAll(){
 // INIT
 // ================================================================
 (async function init(){
+  // Clean up legacy manager PIN from localStorage
+  try{localStorage.removeItem('fa_pin');}catch(e){}
   document.body.style.opacity='0.5';
   await loadDB();
   document.body.style.opacity='1';
+  // Ensure new fields exist in loaded db
+  if(!db.managerAccess)db.managerAccess={};
+  if(!db.superMgrAccess){db.superMgrAccess={...DB_DEFAULTS.superMgrAccess};}
+  if(!db.superMgrEmails){db.superMgrEmails={...DB_DEFAULTS.superMgrEmails};}
+  // Add Jonathan, Russel, Iridium as employees + set roles if not already in Supabase
+  ['Jonathan','Russel','Iridium'].forEach(n=>{if(!db.employees.includes(n))db.employees.push(n);});
+  if(!db.empDefaults.Jonathan)db.empDefaults.Jonathan='Dockside Gallery';
+  if(!db.empDefaults.Russel)db.empDefaults.Russel='Dockside Gallery';
+  if(!db.empDefaults.Iridium)db.empDefaults.Iridium='Dockside Gallery';
+  if(!db.superMgrAccess.Jonathan)db.superMgrAccess.Jonathan=true;
+  if(!db.superMgrAccess.Russel)db.superMgrAccess.Russel=true;
+  if(!db.managerAccess.Iridium)db.managerAccess.Iridium=true;
+  await saveDB(); // persist these additions back to Supabase immediately
   db.employees=sortArr(db.employees);
   db.outlets=sortArr(db.outlets);
   allPeriods=makePeriods();
