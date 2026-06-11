@@ -1363,8 +1363,8 @@ tr:hover td{background:var(--s2)}
 // ================================================================
 // SUPABASE CONFIG — paste your values below
 // ================================================================
-const SUPABASE_URL = "https://qptovgyjecexnwjvhvlo.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "sb_publishable__O-7XSwAQ3iP7ezAeFLNeg_oifyiU9H";
+const SUPABASE_URL = "PASTE_MY_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_MY_PUBLISHABLE_API_KEY_HERE";
 
 // ================================================================
 // DEFAULT DB STRUCTURE
@@ -1456,10 +1456,11 @@ async function saveDB(){
       'Prefer': 'return=minimal'
     };
 
-    // DELETE then INSERT — most reliable upsert for single-row config tables
-    await fetch(SUPABASE_URL + '/rest/v1/app_data?id=eq.main', { method:'DELETE', headers });
-    const res = await fetch(SUPABASE_URL + '/rest/v1/app_data', { method:'POST', headers, body });
+    // Try to delete first (ignore errors — row may not exist yet)
+    try{ await fetch(SUPABASE_URL + '/rest/v1/app_data?id=eq.main', { method:'DELETE', headers }); }catch(e){}
 
+    // Always INSERT fresh
+    const res = await fetch(SUPABASE_URL + '/rest/v1/app_data', { method:'POST', headers, body });
     if(!res.ok){
       const errText = await res.text();
       throw new Error('HTTP ' + res.status + ' — ' + errText);
