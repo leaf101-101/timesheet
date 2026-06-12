@@ -1343,8 +1343,8 @@ tr:hover td{background:var(--s2)}
 // ================================================================
 // SUPABASE CONFIG — paste your values below
 // ================================================================
-const SUPABASE_URL = "https://qptovgyjecexnwjvhvlo.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable__O-7XSwAQ3iP7ezAeFLNeg_oifyiU9H";
+const SUPABASE_URL = "PASTE_MY_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_MY_PUBLISHABLE_API_KEY_HERE";
 
 // ================================================================
 // DEFAULT DB STRUCTURE
@@ -1395,11 +1395,25 @@ async function loadDB(){
     const rows = await res.json();
     if(rows && rows.length > 0 && rows[0].data && Object.keys(rows[0].data).length > 0){
       const p = rows[0].data;
+      // Start from DB_DEFAULTS for structure, then overlay ALL Supabase data.
+      // Critical: never let DB_DEFAULTS overwrite real Supabase data for these fields.
       db = { ...DB_DEFAULTS, ...p };
+      // Merge empDefaults: Supabase wins over defaults
       db.empDefaults = { ...DB_DEFAULTS.empDefaults, ...(p.empDefaults||{}) };
-      db.managerAccess = { ...(p.managerAccess||{}) };
-      db.superMgrAccess = { ...(p.superMgrAccess||DB_DEFAULTS.superMgrAccess) };
+      // These fields must come purely from Supabase — never reset from defaults
+      db.empPins        = p.empPins        || {};
+      db.timesheets     = p.timesheets     || {};
+      db.approvals      = p.approvals      || {};
+      db.customPH       = p.customPH       || {};
+      db.phOverrides    = p.phOverrides    || {};
+      db.hiddenPeriods  = p.hiddenPeriods  || [];
+      // Access fields: Supabase wins, fall back to defaults only if completely absent
+      db.managerAccess  = p.managerAccess  || {};
+      db.superMgrAccess = p.superMgrAccess || {...DB_DEFAULTS.superMgrAccess};
       db.superMgrEmails = { ...(DB_DEFAULTS.superMgrEmails||{}), ...(p.superMgrEmails||{}) };
+      // Employee and outlet lists: use Supabase list if it exists
+      if(p.employees && p.employees.length > 0) db.employees = p.employees;
+      if(p.outlets   && p.outlets.length   > 0) db.outlets   = p.outlets;
       // Also cache locally
       try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
       console.log('Loaded from Supabase');
@@ -1432,7 +1446,22 @@ async function loadDB(){
     // Fall back to localStorage cache
     try{
       const r = localStorage.getItem(DB_KEY);
-      if(r){ const p=JSON.parse(r); db={...DB_DEFAULTS,...p}; db.empDefaults={...DB_DEFAULTS.empDefaults,...(p.empDefaults||{})}; db.managerAccess={...(p.managerAccess||{})}; db.superMgrAccess={...(p.superMgrAccess||DB_DEFAULTS.superMgrAccess)}; db.superMgrEmails={...(DB_DEFAULTS.superMgrEmails||{}),...(p.superMgrEmails||{})}; }
+      if(r){
+        const p=JSON.parse(r);
+        db={...DB_DEFAULTS,...p};
+        db.empDefaults={...DB_DEFAULTS.empDefaults,...(p.empDefaults||{})};
+        db.empPins=p.empPins||{};
+        db.timesheets=p.timesheets||{};
+        db.approvals=p.approvals||{};
+        db.customPH=p.customPH||{};
+        db.phOverrides=p.phOverrides||{};
+        db.hiddenPeriods=p.hiddenPeriods||[];
+        db.managerAccess=p.managerAccess||{};
+        db.superMgrAccess=p.superMgrAccess||{...DB_DEFAULTS.superMgrAccess};
+        db.superMgrEmails={...(DB_DEFAULTS.superMgrEmails||{}),...(p.superMgrEmails||{})};
+        if(p.employees&&p.employees.length>0)db.employees=p.employees;
+        if(p.outlets&&p.outlets.length>0)db.outlets=p.outlets;
+      }
     }catch(e2){}
   }
 }
@@ -2948,15 +2977,22 @@ function exportAll(){
   if(!db.managerAccess)db.managerAccess={};
   if(!db.superMgrAccess){db.superMgrAccess={...DB_DEFAULTS.superMgrAccess};}
   if(!db.superMgrEmails){db.superMgrEmails={...DB_DEFAULTS.superMgrEmails};}
-  // Add Jonathan, Russel, Iridium as employees + set roles if not already in Supabase
-  ['Jonathan','Russel','Iridium'].forEach(n=>{if(!db.employees.includes(n))db.employees.push(n);});
-  if(!db.empDefaults.Jonathan)db.empDefaults.Jonathan='Dockside Gallery';
-  if(!db.empDefaults.Russel)db.empDefaults.Russel='Dockside Gallery';
-  if(!db.empDefaults.Iridium)db.empDefaults.Iridium='Dockside Gallery';
-  if(!db.superMgrAccess.Jonathan)db.superMgrAccess.Jonathan=true;
-  if(!db.superMgrAccess.Russel)db.superMgrAccess.Russel=true;
-  if(!db.managerAccess.Iridium)db.managerAccess.Iridium=true;
-  await saveDB(); // persist these additions back to Supabase immediately
+  // Add Jonathan, Russel, Iridium if not already in Supabase — only save if something changed
+  let _initChanged = false;
+  ['Jonathan','Russel','Iridium'].forEach(n=>{
+    if(!db.employees.includes(n)){db.employees.push(n);_initChanged=true;}
+  });
+  if(!db.empDefaults.Jonathan){db.empDefaults.Jonathan='Dockside Gallery';_initChanged=true;}
+  if(!db.empDefaults.Russel){db.empDefaults.Russel='Dockside Gallery';_initChanged=true;}
+  if(!db.empDefaults.Iridium){db.empDefaults.Iridium='Dockside Gallery';_initChanged=true;}
+  if(!db.superMgrAccess.Jonathan){db.superMgrAccess.Jonathan=true;_initChanged=true;}
+  if(!db.superMgrAccess.Russel){db.superMgrAccess.Russel=true;_initChanged=true;}
+  if(!db.managerAccess.Iridium){db.managerAccess.Iridium=true;_initChanged=true;}
+  // Only write back to Supabase if we actually added something new
+  if(_initChanged){
+    console.log('Init: new users/roles added — saving to Supabase');
+    await saveDB();
+  }
   db.employees=sortArr(db.employees);
   db.outlets=sortArr(db.outlets);
   allPeriods=makePeriods();
