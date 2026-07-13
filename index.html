@@ -1937,13 +1937,22 @@ function getSummaryData(pk){
       const o=d.outlet||ts.outlet;
       outletSet.add(o);
       if(!data[emp].byOutlet[o])data[emp].byOutlet[o]={fo:0,bo:0};
-      data[emp].fo+=fo;data[emp].bo+=bo;
-      data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
       data[emp].sick+=d.sick||0;data[emp].annual+=d.annual||0;data[emp].comp+=d.comp||0;
       const isSun=new Date(dk+'T00:00:00').getDay()===0;
       const isPH=phDatesSum.has(dk);
-      if(isSun){data[emp].foSun+=fo;data[emp].boSun+=bo;}
-      if(isPH){data[emp].foPH+=fo;data[emp].boPH+=bo;}
+      if(isSun){
+        // Sunday hours go into foSun/boSun only — NOT into fo/bo normal totals
+        data[emp].foSun+=fo;data[emp].boSun+=bo;
+        data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
+      } else if(isPH){
+        // PH hours go into foPH/boPH only — NOT into fo/bo normal totals
+        data[emp].foPH+=fo;data[emp].boPH+=bo;
+        data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
+      } else {
+        // Normal weekday hours
+        data[emp].fo+=fo;data[emp].bo+=bo;
+        data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
+      }
     });
   });
   return{data,outlets:db.outlets.filter(o=>outletSet.has(o))};
@@ -2128,7 +2137,7 @@ function renderSummary(){
     const normalTotal=d.fo+d.bo;
     const sunTotal=d.foSun+d.boSun;
     const phTotal=d.foPH+d.boPH;
-    const grandTotal=normalTotal+d.sick+d.annual+d.comp;
+    const grandTotal=normalTotal+sunTotal+phTotal+d.sick+d.annual+d.comp;
     tot.fo+=d.fo;tot.bo+=d.bo;tot.foSun+=d.foSun;tot.boSun+=d.boSun;
     tot.foPH+=d.foPH;tot.boPH+=d.boPH;tot.sick+=d.sick;tot.ann+=d.annual;tot.comp+=d.comp;
     const fmt=v=>v>0?v.toFixed(1):'—';
@@ -2153,7 +2162,7 @@ function renderSummary(){
   const totNormal=tot.fo+tot.bo;
   const totSun=tot.foSun+tot.boSun;
   const totPH=tot.foPH+tot.boPH;
-  const totGrand=totNormal+tot.sick+tot.ann+tot.comp;
+  const totGrand=totNormal+totSun+totPH+tot.sick+tot.ann+tot.comp;
   const fmtT=v=>v>0?v.toFixed(1):'—';
   tbody.innerHTML+=`<tr style="background:var(--s2);font-weight:bold;border-top:2px solid var(--border)">
     <td>TOTAL</td>
@@ -2185,7 +2194,7 @@ function exportSummaryCSV(){
     const normalTotal=d.fo+d.bo;
     const sunTotal=d.foSun+d.boSun;
     const phTotal=d.foPH+d.boPH;
-    const grandTotal=normalTotal+d.sick+d.annual+d.comp;
+    const grandTotal=normalTotal+sunTotal+phTotal+d.sick+d.annual+d.comp;
     rows.push([emp,d.fo,d.bo,normalTotal,d.foSun,d.boSun,sunTotal,d.foPH,d.boPH,phTotal,d.sick,d.annual,d.comp,grandTotal,d.locked?'Yes':'No']);
   });
   dlCSV(rows,'summary_'+pk+'.csv');
