@@ -1929,39 +1929,25 @@ function getSummaryData(pk){
   const periodObj=allPeriods.find(p=>p.key===pk);
   const phDatesSum=new Set();
   if(periodObj){daysBetween(periodObj.start,periodObj.end).forEach(day=>{const dk=day.toISOString().slice(0,10);if(getPHInfo(dk))phDatesSum.add(dk);});}
-  // Initialise all current employees with zero data
   db.employees.forEach(emp=>{
     data[emp]={byOutlet:{},fo:0,bo:0,foSun:0,boSun:0,foPH:0,boPH:0,sick:0,annual:0,comp:0,locked:isPeriodLocked(emp,pk)};
-  });
-  // Iterate actual timesheet keys so we correctly match stored employee names
-  // (avoids wrong-person bug when db.employees names differ from stored keys)
-  Object.entries(db.timesheets).forEach(([key,ts])=>{
-    const parts=key.split('|');
-    if(parts.length<2)return;
-    const emp=parts[0];
-    const tsPeriod=parts.slice(1).join('|');
-    if(tsPeriod!==pk)return;
-    // Ensure employee has an entry even if not in current db.employees list
-    if(!data[emp])data[emp]={byOutlet:{},fo:0,bo:0,foSun:0,boSun:0,foPH:0,boPH:0,sick:0,annual:0,comp:0,locked:isPeriodLocked(emp,pk)};
+    const ts=db.timesheets[`${emp}|${pk}`];if(!ts)return;
     Object.entries(ts.days).forEach(([dk,d])=>{
       const fo=d.fo||0,bo=d.bo||0;
       const o=d.outlet||ts.outlet;
       outletSet.add(o);
       if(!data[emp].byOutlet[o])data[emp].byOutlet[o]={fo:0,bo:0};
       data[emp].sick+=d.sick||0;data[emp].annual+=d.annual||0;data[emp].comp+=d.comp||0;
-      // Use stored sunday flag OR re-derive from date — both checked for safety
+      // Use stored sunday flag AND re-derive from date for reliability
       const isSun=d.sunday===true||new Date(dk+'T00:00:00').getDay()===0;
       const isPH=d.ph===true||phDatesSum.has(dk);
       if(isSun){
-        // Sunday hours go into foSun/boSun only — NOT into fo/bo normal totals
         data[emp].foSun+=fo;data[emp].boSun+=bo;
         data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
       } else if(isPH){
-        // PH hours go into foPH/boPH only — NOT into fo/bo normal totals
         data[emp].foPH+=fo;data[emp].boPH+=bo;
         data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
       } else {
-        // Normal weekday hours only
         data[emp].fo+=fo;data[emp].bo+=bo;
         data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
       }
@@ -1998,14 +1984,9 @@ function renderHoursCheck(pk){
   });
 
   // Collect per-outlet → per-employee actuals
-  // Iterate actual timesheet keys (not just db.employees) to avoid wrong-person bug
   const outletMap={};
-  Object.entries(db.timesheets).forEach(([key,ts])=>{
-    const parts=key.split('|');
-    if(parts.length<2)return;
-    const emp=parts[0];
-    const tsPeriod=parts.slice(1).join('|');
-    if(tsPeriod!==pk)return;
+  db.employees.forEach(emp=>{
+    const ts=db.timesheets[`${emp}|${pk}`];if(!ts)return;
     Object.entries(ts.days).forEach(([dk,d])=>{
       const o=d.outlet||ts.outlet;
       if(!outletMap[o])outletMap[o]={};
@@ -2149,8 +2130,7 @@ function renderSummary(){
     <th class="tc" style="color:var(--ph);font-size:10px;font-weight:normal">(h) BO</th>
   </tr>`;
   let tot={fo:0,bo:0,foSun:0,boSun:0,foPH:0,boPH:0,sick:0,ann:0,comp:0};
-  const summaryEmps=sortArr(Object.keys(data).filter(e=>data[e]&&(data[e].fo||data[e].bo||data[e].foSun||data[e].boSun||data[e].foPH||data[e].boPH||data[e].sick||data[e].annual||data[e].comp||db.employees.includes(e))));
-  tbody.innerHTML=summaryEmps.map(emp=>{
+  tbody.innerHTML=sortArr(db.employees).map(emp=>{
     const d=data[emp];
     const normalTotal=d.fo+d.bo;
     const sunTotal=d.foSun+d.boSun;
@@ -2207,9 +2187,8 @@ function exportSummaryCSV(){
   const rows=[
     ['Employee','Front Office (a)','Back Office (b)','Normal Total (a+b)','FO Sunday (d)','BO Sunday (e)','Total Sunday (d+e)','FO Public Holiday (g)','BO Public Holiday (h)','Total Public Holiday (g+h)','Sick (j)','Annual Leave (k)','Compassionate (l)','Total Hrs (n)','Approved']
   ];
-  sortArr(Object.keys(data)).forEach(emp=>{
+  sortArr(db.employees).forEach(emp=>{
     const d=data[emp];
-    if(!d)return;
     const normalTotal=d.fo+d.bo;
     const sunTotal=d.foSun+d.boSun;
     const phTotal=d.foPH+d.boPH;
