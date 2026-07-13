@@ -1900,7 +1900,8 @@ async function saveTimesheet(silent){
     const ph=!!getPHInfo(dk);
     const galSel=row.querySelector('.gal-sel');
     const dayOutlet=galSel?galSel.value:outlet;
-    if(fo||bo||sick||annual||comp||sunday||ph||notes)
+    // Only save if actual hours/notes entered — don't save empty Sunday/PH placeholders
+    if(fo||bo||sick||annual||comp||notes)
       daysData[dk]={fo,bo,sunday,ph,sick,annual,comp,notes,outlet:dayOutlet};
   });
   db.timesheets[`${emp}|${pk}`]={outlet,days:daysData};
@@ -1938,9 +1939,10 @@ function getSummaryData(pk){
       outletSet.add(o);
       if(!data[emp].byOutlet[o])data[emp].byOutlet[o]={fo:0,bo:0};
       data[emp].sick+=d.sick||0;data[emp].annual+=d.annual||0;data[emp].comp+=d.comp||0;
-      // Use stored sunday flag AND re-derive from date for reliability
-      const isSun=d.sunday===true||new Date(dk+'T00:00:00').getDay()===0;
-      const isPH=d.ph===true||phDatesSum.has(dk);
+      // Always derive Sunday/PH from the date key — never trust stored flags
+      // (stored flags can be wrong due to timezone issues or legacy data)
+      const isSun=new Date(dk+'T00:00:00').getDay()===0;
+      const isPH=phDatesSum.has(dk);
       if(isSun){
         data[emp].foSun+=fo;data[emp].boSun+=bo;
         data[emp].byOutlet[o].fo+=fo;data[emp].byOutlet[o].bo+=bo;
@@ -1991,8 +1993,9 @@ function renderHoursCheck(pk){
       const o=d.outlet||ts.outlet;
       if(!outletMap[o])outletMap[o]={};
       if(!outletMap[o][emp])outletMap[o][emp]={fo:0,bo:0,sunFO:0,sunBO:0,phFO:0,phBO:0};
-      const isSun=d.sunday===true||new Date(dk+'T00:00:00').getDay()===0;
-      const isPH=d.ph===true||phDates.has(dk);
+      // Always derive Sunday/PH from the date key — never trust stored flags
+      const isSun=new Date(dk+'T00:00:00').getDay()===0;
+      const isPH=phDates.has(dk);
       const dFO=d.fo||0,dBO=d.bo||0;
       outletMap[o][emp].fo+=dFO;outletMap[o][emp].bo+=dBO;
       if(isSun){outletMap[o][emp].sunFO+=dFO;outletMap[o][emp].sunBO+=dBO;}
