@@ -1504,6 +1504,7 @@ const DAYLIST=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 function fd(d){return d.toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'});}
 function fds(d){return d.toLocaleDateString('en-ZA',{day:'2-digit',month:'short'});}
 function daysBetween(s,e){const a=[];const c=new Date(s);while(c<=e){a.push(new Date(c));c.setDate(c.getDate()+1);}return a;}
+function localDateStr(d){const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`;}
 function hhmm(t){if(!t)return 0;const[h,m]=t.split(':').map(Number);return h+m/60;}
 function tradingHrs(outlet,dayKey){const th=db.tradingHours?.[outlet]?.[dayKey];if(!th||!th.o||!th.c)return 0;return Math.max(0,hhmm(th.c)-hhmm(th.o));}
 function sortArr(a){return[...a].sort((x,y)=>x.localeCompare(y));}
@@ -1530,12 +1531,12 @@ function getSAPH(year){
   const holidays=[];
   fixed.forEach(h=>{
     const dt=new Date(year,h.m-1,h.d);
-    const dk=dt.toISOString().slice(0,10);
+    const dk=localDateStr(dt);
     const dp=dk in overrides?overrides[dk]:true;
     holidays.push({date:dt,name:h.n,statutory:true,doublePay:dp});
     if(dt.getDay()===0){
       const mon=new Date(year,h.m-1,h.d+1);
-      const mdk=mon.toISOString().slice(0,10);
+      const mdk=localDateStr(mon);
       const mdp=mdk in overrides?overrides[mdk]:true;
       holidays.push({date:mon,name:h.n+' (Observed Monday)',statutory:true,observed:true,doublePay:mdp});
     }
@@ -1543,7 +1544,7 @@ function getSAPH(year){
   const e=easter(year);
   const gf=new Date(e);gf.setDate(e.getDate()-2);
   const em=new Date(e);em.setDate(e.getDate()+1);
-  const gfdk=gf.toISOString().slice(0,10),emdk=em.toISOString().slice(0,10);
+  const gfdk=localDateStr(gf),emdk=localDateStr(em);
   holidays.push({date:gf,name:'Good Friday',statutory:true,doublePay:gfdk in overrides?overrides[gfdk]:true});
   holidays.push({date:em,name:'Family Day (Easter Monday)',statutory:true,doublePay:emdk in overrides?overrides[emdk]:true});
   Object.entries(db.customPH||{}).forEach(([dk,val])=>{
@@ -1560,7 +1561,7 @@ function getSAPH(year){
 }
 function getPHInfo(dateStr){
   const dt=new Date(dateStr+'T00:00:00');
-  return getSAPH(dt.getFullYear()).find(h=>h.date.toISOString().slice(0,10)===dateStr)||null;
+  return getSAPH(dt.getFullYear()).find(h=>localDateStr(h.date)===dateStr)||null;
 }
 
 // Periods
@@ -1822,7 +1823,7 @@ function loadEntryForm(){
   const tbody=document.getElementById('hr-tbody');
   const outletOpts=sortArr(db.outlets).map(o=>`<option>${o}</option>`).join('');
   days.forEach(day=>{
-    const dk=day.toISOString().slice(0,10);
+    const dk=localDateStr(day);
     const d=ex.days[dk]||{};
     // Per-day outlet: use saved outlet only if this day has actual hours entered.
     // If the default gallery changed and no hours are saved yet for this day, show the new default.
@@ -1929,7 +1930,7 @@ function getSummaryData(pk){
   // Pre-build PH date set for this period
   const periodObj=allPeriods.find(p=>p.key===pk);
   const phDatesSum=new Set();
-  if(periodObj){daysBetween(periodObj.start,periodObj.end).forEach(day=>{const dk=day.toISOString().slice(0,10);if(getPHInfo(dk))phDatesSum.add(dk);});}
+  if(periodObj){daysBetween(periodObj.start,periodObj.end).forEach(day=>{const dk=localDateStr(day);if(getPHInfo(dk))phDatesSum.add(dk);});}
   db.employees.forEach(emp=>{
     data[emp]={byOutlet:{},fo:0,bo:0,foSun:0,boSun:0,foPH:0,boPH:0,sick:0,annual:0,comp:0,locked:isPeriodLocked(emp,pk)};
     const ts=db.timesheets[`${emp}|${pk}`];if(!ts)return;
@@ -1981,7 +1982,7 @@ function renderHoursCheck(pk){
   let sundayCount=0;const phDates=new Set();
   days.forEach(day=>{
     if(day.getDay()===0)sundayCount++;
-    const dk=day.toISOString().slice(0,10);
+    const dk=localDateStr(day);
     if(getPHInfo(dk))phDates.add(dk);
   });
 
@@ -2441,7 +2442,7 @@ function renderPHPage(){
       </tr></thead>
       <tbody>
         ${phs.map((h,i)=>{
-          const dk=h.date.toISOString().slice(0,10);
+          const dk=localDateStr(h.date);
           const wd=DAYS[h.date.getDay()];
           const stripe=i%2===0?'':'background:var(--s2)';
           const typeLabel=h.custom?'<span style="color:var(--warn);font-size:11px">★ Custom</span>':h.observed?'<span style="color:var(--tm);font-size:11px">Observed</span>':'<span style="color:var(--ph);font-size:11px">Statutory</span>';
@@ -2515,7 +2516,7 @@ function renderPeriodsPage(){
     const days=daysBetween(p.start,p.end);
     const sundays=days.filter(d=>d.getDay()===0).length;
     const phSet=new Set();
-    [p.start.getFullYear(),p.end.getFullYear()].forEach(y=>{getSAPH(y).forEach(h=>{const dk=h.date.toISOString().slice(0,10);const dt=new Date(dk+'T00:00:00');if(dt>=p.start&&dt<=p.end)phSet.add(dk);});});
+    [p.start.getFullYear(),p.end.getFullYear()].forEach(y=>{getSAPH(y).forEach(h=>{const dk=localDateStr(h.date);const dt=new Date(dk+'T00:00:00');if(dt>=p.start&&dt<=p.end)phSet.add(dk);});});
     const tsCount=Object.keys(db.timesheets).filter(k=>k.endsWith('|'+p.key)).length;
     const isApproved=Object.keys(db.approvals||{}).some(k=>k.endsWith('|'+p.key));
     const now=new Date();const isCurrent=p.start<=now&&now<=p.end;
