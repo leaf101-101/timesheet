@@ -1696,7 +1696,7 @@ function applyAccess(){
   // Update Manage tab button visibility: only super managers see it
   const manageBtn=document.querySelector('.nb[onclick*="manage"]');
   if(manageBtn)manageBtn.style.setProperty('display',sm?'inline-flex':'none','important');
-  if(mgr){
+  if(mgr || _empUnlocked){
     document.getElementById('emp-pin-gate').style.display='none';
     loadEntryForm();
   } else {
