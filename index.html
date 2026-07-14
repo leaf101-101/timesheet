@@ -1368,6 +1368,54 @@ const DB_DEFAULTS = {
 };
 let db = JSON.parse(JSON.stringify(DB_DEFAULTS));
 
+// Snapshot of db exactly as it matched Supabase at last successful load/save.
+// Used by saveDB() to work out what THIS session actually changed, so a save
+// can merge those changes into the latest remote data instead of blindly
+// overwriting whatever other users saved in the meantime.
+let _dbBaseline = null;
+function _cloneDb(o){ return JSON.parse(JSON.stringify(o)); }
+
+// Merge local changes (vs baseline) onto the freshest remote copy.
+// For each top-level field:
+//  - dictionaries (keyed by employee/date/etc): only the specific sub-keys
+//    that changed locally (added/edited/removed) are applied on top of remote.
+//  - arrays (employees/outlets/hiddenPeriods): only locally added/removed
+//    items are applied on top of remote.
+//  - anything else: local value wins only if it actually differs from baseline.
+function _mergeForSave(remote, local, baseline){
+  const merged = _cloneDb(remote || {});
+  const keys = new Set([...Object.keys(local||{}), ...Object.keys(baseline||{}), ...Object.keys(merged)]);
+  keys.forEach(key=>{
+    const lv = local ? local[key] : undefined;
+    const bv = baseline ? baseline[key] : undefined;
+    if(Array.isArray(lv) || Array.isArray(bv)){
+      const lArr = Array.isArray(lv) ? lv : [];
+      const bArr = Array.isArray(bv) ? bv : [];
+      const added = lArr.filter(x=>!bArr.includes(x));
+      const removed = bArr.filter(x=>!lArr.includes(x));
+      let out = Array.isArray(merged[key]) ? merged[key].slice() : [];
+      out = out.filter(x=>!removed.includes(x));
+      added.forEach(x=>{ if(!out.includes(x)) out.push(x); });
+      merged[key] = out;
+    } else if((lv && typeof lv==='object') || (bv && typeof bv==='object')){
+      const lObj = (lv && typeof lv==='object') ? lv : {};
+      const bObj = (bv && typeof bv==='object') ? bv : {};
+      const remObj = (merged[key] && typeof merged[key]==='object') ? merged[key] : {};
+      const out = {...remObj};
+      Object.keys(lObj).forEach(k=>{
+        if(JSON.stringify(lObj[k]) !== JSON.stringify(bObj[k])) out[k] = lObj[k];
+      });
+      Object.keys(bObj).forEach(k=>{
+        if(!(k in lObj)) delete out[k];
+      });
+      merged[key] = out;
+    } else {
+      if(JSON.stringify(lv) !== JSON.stringify(bv)) merged[key] = lv;
+    }
+  });
+  return merged;
+}
+
 // ================================================================
 // SUPABASE REST HELPERS (no library — plain fetch, works from file://)
 // ================================================================
@@ -1416,6 +1464,7 @@ async function loadDB(){
       if(p.outlets   && p.outlets.length   > 0) db.outlets   = p.outlets;
       // Also cache locally
       try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
+      _dbBaseline = _cloneDb(db);
       console.log('Loaded from Supabase');
       toast('☁ Loaded from Supabase');
     } else {
@@ -1432,6 +1481,7 @@ async function loadDB(){
       };
       const ins = await fetch(SUPABASE_URL + '/rest/v1/app_data', { method:'POST', headers, body });
       if(ins.ok){
+        _dbBaseline = _cloneDb(db);
         console.log('Inserted default row into Supabase');
         toast('☁ Supabase initialised');
       } else {
@@ -1461,6 +1511,7 @@ async function loadDB(){
         db.superMgrEmails={...(DB_DEFAULTS.superMgrEmails||{}),...(p.superMgrEmails||{})};
         if(p.employees&&p.employees.length>0)db.employees=p.employees;
         if(p.outlets&&p.outlets.length>0)db.outlets=p.outlets;
+        _dbBaseline = _cloneDb(db);
       }
     }catch(e2){}
   }
@@ -1468,6 +1519,27 @@ async function loadDB(){
 
 async function saveDB(){
   try{
+    // Pull the freshest remote data first, so we don't clobber changes made
+    // by other users since this session last loaded/saved. Only THIS session's
+    // actual changes (vs _dbBaseline) get merged on top of that fresh copy.
+    let remote = db;
+    try{
+      const getRes = await fetch(
+        SUPABASE_URL + '/rest/v1/app_data?id=eq.main&select=data',
+        { method:'GET', headers: sbHeaders() }
+      );
+      if(getRes.ok){
+        const rows = await getRes.json();
+        if(rows && rows.length > 0 && rows[0].data && Object.keys(rows[0].data).length > 0){
+          remote = rows[0].data;
+        }
+      }
+    }catch(e){ /* if this fails, fall back to saving local db as-is below */ }
+
+    if(_dbBaseline){
+      db = _mergeForSave(remote, db, _dbBaseline);
+    }
+
     const body = JSON.stringify({ id:'main', data: db, updated_at: new Date().toISOString() });
 
     // Try to delete first (ignore errors — row may not exist yet)
@@ -1483,6 +1555,7 @@ async function saveDB(){
       const errText = await res.text();
       throw new Error('HTTP ' + res.status + ' — ' + errText);
     }
+    _dbBaseline = _cloneDb(db);
     try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
     console.log('Saved to Supabase');
     return true;
